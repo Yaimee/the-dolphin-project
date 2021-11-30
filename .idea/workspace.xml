@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5acdbb23-3555-40bd-ba0d-a3f62f098b4a" name="Changes" comment="conflict">
-      <change afterPath="$PROJECT_DIR$/src/Trainer/Analysis.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Trainer/Competition.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Trainer/Discipline.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Trainer/Performance.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Trainer/Trainer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Trainer/Analysis.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Analysis.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Trainer/Competition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Competition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Trainer/Performance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Performance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Trainer/Trainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Trainer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,8 +39,8 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="jdk.selected.JAVA_MODULE" value="16" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
@@ -70,7 +69,7 @@
       <workItem from="1638209634174" duration="2088000" />
       <workItem from="1638211751816" duration="152000" />
       <workItem from="1638211937370" duration="98000" />
-      <workItem from="1638212050444" duration="2448000" />
+      <workItem from="1638212050444" duration="7980000" />
     </task>
     <task id="LOCAL-00001" summary="j">
       <created>1638210674152</created>
@@ -86,7 +85,14 @@
       <option name="project" value="LOCAL" />
       <updated>1638211101460</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="conflict">
+      <created>1638265007942</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1638265007942</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
