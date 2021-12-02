@@ -1,0 +1,26 @@
+[
+  {
+    "age": 12,
+    "name": "john",
+    "gender": "male",
+    "email": "jw@loma.dk",
+    "swimmer": "COMPETITIVE",
+    "team": "JUNIOR"
+  },
+  {
+    "age": 12,
+    "name": "weeb",
+    "gender": "male",
+    "email": "lowlw@loma.dk",
+    "swimmer": "CASUAL",
+    "team": "JUNIOR"
+  },
+  {
+    "age": 12,
+    "name": "duub",
+    "gender": "female",
+    "email": "wew@loma.dk",
+    "swimmer": "COMPETITIVE",
+    "team": "JUNIOR"
+  }
+]
