@@ -1,5 +1,6 @@
 package Trainer;
-package Chairman;
+
+import Chairman.*;
 
 public class Performance {
     Member member;

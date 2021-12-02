@@ -48,6 +48,7 @@ public class DataHandler {
 
         Member[] fromJson = gson.fromJson(reader, Member[].class);
         memberList.addAll(Arrays.asList(fromJson));
+        System.out.println(memberList.get(1));
     }
 
 }
