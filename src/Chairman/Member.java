@@ -2,6 +2,7 @@ package Chairman;
 
 
 public class Member {
+    private int ID;
     private int age;
     private String name;
     private String gender;
@@ -43,10 +44,19 @@ public class Member {
         return team;
     }
 
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
     @Override
     public String toString() {
         return "Member{" +
-                "age=" + age +
+                "ID=" + ID +
+                ", age=" + age +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", email='" + email + '\'' +
@@ -55,7 +65,7 @@ public class Member {
                 '}';
     }
 
-    /*
+   /*
     //--Team--//
     private Team seniorOrJunior(boolean bool){
         if(bool)

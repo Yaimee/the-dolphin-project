@@ -37,18 +37,49 @@ public class DataHandler {
         memberList.add(memberToAdd);
     }
 
-    public void initMemberJson(){
-        Reader reader = null;
-        try {
-            reader = Files.newBufferedReader(Paths.get("members/members.json"));
+    public void deleteMember(int id){
+        for (Member member : memberList) {
+            if(member.getID() == id){
+                memberList.remove(member);
+                writeMembers();
+                break;
+            }
+        }
+    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void printMemberList(){
+        System.out.println(memberList);
+    }
+
+    public void initMemberJson(){
+        try {
+            Reader reader = null;
+            try {
+                reader = Files.newBufferedReader(Paths.get("members/members.json"));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Member[] fromJson = gson.fromJson(reader, Member[].class);
+            memberList.addAll(Arrays.asList(fromJson));
+
+        } catch (NullPointerException e) {
+            System.out.println("No existing users found");
         }
 
-        Member[] fromJson = gson.fromJson(reader, Member[].class);
-        memberList.addAll(Arrays.asList(fromJson));
-        System.out.println(memberList.get(1));
     }
+
+    public ArrayList<Member> findMembersByName(String name){
+        ArrayList<Member> foundMembers = new ArrayList<>();
+
+        for (Member member : memberList)
+            if(member.getName().matches(name))
+                foundMembers.add(member);
+
+        return foundMembers;
+    }
+
+
 
 }
