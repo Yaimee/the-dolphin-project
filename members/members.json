@@ -34,14 +34,5 @@
     "email": "jw@loma.dk",
     "swimmer": "COMPETITIVE",
     "team": "JUNIOR"
-  },
-  {
-    "ID": 5,
-    "age": 12,
-    "name": "weeb",
-    "gender": "male",
-    "email": "lowlw@loma.dk",
-    "swimmer": "CASUAL",
-    "team": "JUNIOR"
   }
 ]

@@ -1,16 +1,27 @@
 package accounting;
 
+import Chairman.DataHandler;
+import Chairman.Member;
+
 public class Accountant {
     private String username;
     private String password;
+    private final Subscription sub = new Subscription();
 
-    public Accountant(String username, String password) {
-        this.username = username;
-        this.password = password;
+
+    public void InitiateAddMemberToList(Member member) {
+        sub.addMemberToList(member);
     }
 
-    public void addMemberToList() {
-        System.out.println("Add member to list");
+    public void InitiateChangeMembershipToPassive(Member member) {
+        sub.changeMembershipToPassive(member);
     }
 
+    public void initiateCreateSubscription(Member member) {
+        sub.createSubscription(member);
+    }
+
+    public void initiateGetProjectedYearlyRevenue() {
+        System.out.println(sub.getProjectedYearlyRevenue());
+    }
 }

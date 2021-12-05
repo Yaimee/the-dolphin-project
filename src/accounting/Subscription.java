@@ -1,55 +1,73 @@
 package accounting;
 
+import Chairman.DataHandler;
+import Chairman.Member;
+import Chairman.TypeOfSwimmer;
+
 import java.util.ArrayList;
 
 public class Subscription {
 
+    static int numberOfJuniorCasual = 0;
+    static int numberOfSeniorCasual = 0;
+    static int numberOfJuniorCompetitor = 0;
+    static int numberOfSeniorCompetitor = 0;
+    static int numberOfSeniorRetired = 0;
+    static int numberOfPassiveMemberships = 0;
+
+    static ArrayList<Member> payingMembers = new ArrayList<>();
+    static ArrayList<Member> nonPayingMembers = new ArrayList<>();
+
+    private final DataHandler dh = new DataHandler("members/nonPayingMembers.json");
 
 
-    private final int juniorPrice = 1000;
-    private final int seniorPrice = 1600;
-    private final int seniorRetiredPrice = 1200;
-    private final int passiveMembershipPrice = 500;
-
-    int numberOfJuniorCasual = 0;
-    int numberOfSeniorCasual = 0;
-    int numberOfJuniorCompetitor = 0;
-    int numberOfSeniorCompetitor = 0;
-    int numberOfSeniorRetired = 0;
-
-    static ArrayList<TestMember> payingMembers = new ArrayList<TestMember>();
-    static ArrayList<TestMember> nonPayingMembers = new ArrayList<TestMember>();
-
-    public Subscription(TestMember member) {
+    public void createSubscription(Member member) {
         payingMembers.add(member);
         getTypeOfSubscription(member);
-        System.out.println(save);
     }
 
-    public void changeMembershipToPassive
+    public void addMemberToList(Member member) {
+        dh.addMemberToList(member);
+        dh.writeMembers();
+        //dh.deleteMember(member.getID());
+    }
 
+    public int changeMembershipToPassive(Member member) {
+        System.out.println("Code that changes membership to passive");
+        numberOfPassiveMemberships ++;
+        return 500;
+    }
 
-    public int getTypeOfSubscription(TestMember member) {
+    public int getProjectedYearlyRevenue() {
+        int revenue = 0;
+        revenue += 1000 * (numberOfJuniorCasual + numberOfJuniorCompetitor);
+        revenue += 1600 * (numberOfSeniorCasual + numberOfSeniorCompetitor);
+        revenue += 1200 * numberOfSeniorRetired;
+        revenue += 500 * numberOfPassiveMemberships;
+        return revenue;
+    }
+
+    public int getTypeOfSubscription(Member member) {
         int age = member.getAge();
-        TestTypeOfSwimmer swimmer = member.getSwimmer();
+        TypeOfSwimmer swimmer = member.getSwimmer();
 
         if (age < 18 || age >= 60) {
             if (age >= 60) {
                 numberOfSeniorRetired ++;
-                return seniorRetiredPrice;
-            } else if (swimmer.equals(TestTypeOfSwimmer.CASUAL)) {
+                return 1200;
+            } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
                 numberOfJuniorCasual ++;
             } else {
                 numberOfJuniorCompetitor ++;
             }
-            return juniorPrice;
+            return 1000;
         } else {
-            if (swimmer.equals(TestTypeOfSwimmer.CASUAL)) {
+            if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
                 numberOfSeniorCasual ++;
             } else {
                 numberOfSeniorCompetitor ++;
             }
-            return seniorPrice;
+            return 1600;
         }
     }
 }
