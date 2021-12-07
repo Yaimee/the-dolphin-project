@@ -1,0 +1,826 @@
+Index: src/Trainer/Trainer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\n\r\npublic class Trainer {\r\n    String username;\r\n    String password;\r\n    Trainer (String username, String password) {\r\n        if(Menu.username == username && Menu.password == password) {\r\n            this.username = username;\r\n            this.password = password;\r\n        }\r\n    }\r\n\r\n    public void displayTopFive() {\r\n\r\n    }\r\n\r\n    public void createNewCompetition() {\r\n\r\n    }\r\n\r\n    public void logPerformances() {\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Trainer.java b/src/Trainer/Trainer.java
+--- a/src/Trainer/Trainer.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/Trainer/Trainer.java	(date 1638909274589)
+@@ -1,24 +1,165 @@
+-package Trainer;
++
++import java.util.ArrayList;
++import java.util.Scanner;
+ 
+ public class Trainer {
++    Analysis analyse = new Analysis();
++    Scanner sc = new Scanner(System.in);
++    ArrayList<Competition> competitions = new ArrayList<>();
+     String username;
+     String password;
++    /*
+     Trainer (String username, String password) {
+-        if(Menu.username == username && Menu.password == password) {
+             this.username = username;
+             this.password = password;
++    }*/
++
++    public void displayCasualTopFive(Discipline discipline, Team team) {
++        System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
++        for (int i = 0; i < analyse.getDailyTopFive(discipline, team).size(); i++) {
++            System.out.println((i + 1) + ". " + analyse.getDailyTopFive(discipline, team).get(i).getName() + "\t\t\t" + analyse.getDailyTopFive(discipline, team).get(i).timeFormatted());
+         }
+-    }
+-
+-    public void displayTopFive() {
+ 
+     }
+ 
+     public void createNewCompetition() {
++        Discipline discipline;
++        int selectOption;
++        Team team;
++        String name;
++        int hours;
++        int minutes;
++        String time;
++        System.out.print("Write the competition name: ");
++        name = sc.nextLine();
++        System.out.println("What kind of swimming discipline is the event?");
++        System.out.println("1. crawl");
++        System.out.println("2. butterfly");
++        System.out.println("3. breaststroke");
++        System.out.println("4. backstroke");
++        selectOption = sc.nextInt();
++        sc.nextLine();
++        switch(selectOption) {
++            case 1:
++                discipline = Discipline.CRAWL;
++                break;
++            case 2:
++                discipline = Discipline.BUTTERFLY;
++                break;
++            case 3:
++                discipline = Discipline.BREASTSTROKE;
++                break;
++            case 4:
++                discipline = Discipline.BACKSTROKE;
++                break;
++            default:
++                discipline = null;
++        }
++        System.out.println("When does the competition start?");
++        System.out.print("Insert hour: ");
++        hours = sc.nextInt();
++        sc.nextLine();
++        System.out.print("Insert minute: ");
++        minutes = sc.nextInt();
++        sc.nextLine();
++        time = String.format("%02d:%02d", hours, minutes);
++        System.out.println("Where is the competition held?");
++        String place = sc.nextLine();
++        System.out.println("Is it a junior or senior event? Insert \"1\" for junior or \"2\" for senior: ");
++        selectOption = sc.nextInt();
++        sc.nextLine();
++        if (selectOption == 1) {
++            team = Team.JUNIOR;
++        } else {
++            team = Team.SENIOR;
++        }
++        competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));
++    }
++
++    public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
++        System.out.println("Would you like to add competitors from the top five list now? (y/n)");
++        String selectOption = sc.nextLine();
++        selectOption.toUpperCase();
++        if(selectOption.equals("N")) {
++            return null;
++        } else {
++            System.out.println("Competitors: ");
++            System.out.println("Name:\t\t\tAge:");
++            for(int i = 0; i < analyse.getDailyTopFive(discipline,team).size(); i++) {
++                System.out.println(analyse.getDailyTopFive(discipline,team));
++            }
++            return analyse.getDailyTopFive(discipline,team);
++        }
++    }
+ 
++    public void addCompetitiorsLater() {
++        System.out.println("To which competition do you wish to add competitors?");
++        for ( int i = 0; i < competitions.size(); i++) {
++            System.out.println((i + 1)+ ". " + competitions.get(i).getName());
++        }
++        int selectOption = sc.nextInt();
++        sc.nextLine();
++        Discipline discipline = competitions.get(selectOption - 1).getDiscipline();
++        Team team = competitions.get(selectOption).getTeam();
++        competitions.get(selectOption - 1).addCompetitors(analyse.getDailyTopFive(discipline,team));
++        System.out.println("added");
+     }
+ 
+-    public void logPerformances() {
++    public void getCompetitionList(){
++        if (competitions.size() == 0) {
++            System.out.println("No competitions registered");
++        } else {
++            System.out.println("Competitions registered:");
++            for (int i = 0; i < competitions.size(); i++) {
++                System.out.println((i + 1) + ". " + competitions.get(i).getName());
++            }
++        }
+ 
++    }
++
++    public void logDailyPerformance() {
++        Discipline discipline;
++        System.out.println("Members available for logging: ");
++        for(int i = 0; i < Subscription.payingMembers.size(); i++) {
++            System.out.println((i + 1) + ". " + Subscription.payingMembers.get(i).getName());
++        }
++        System.out.println("To select a member, insert the corresponding value");
++        int memberSelect = sc.nextInt();
++        sc.nextLine();
++        System.out.println(Subscription.payingMembers.get(memberSelect - 1).getName() + " selected.");
++        System.out.println("Insert time for logging");
++        System.out.println("minutes: ");
++        int minutes = sc.nextInt();
++        sc.nextLine();
++        System.out.println("seconds: ");
++        int seconds = sc.nextInt();
++        sc.nextLine();
++        System.out.println("milliseconds: ");
++        int milliseconds = sc.nextInt();
++        sc.nextLine();
++        System.out.println("Insert discipline");
++        System.out.println("1. crawl");
++        System.out.println("2. butterfly");
++        System.out.println("3. breaststroke");
++        System.out.println("4. backstroke");
++        int selectOption = sc.nextInt();
++        sc.nextLine();
++        switch ((selectOption)) {
++            case 1:
++                discipline = Discipline.CRAWL;
++                break;
++            case 2:
++                discipline = Discipline.BUTTERFLY;
++                break;
++            case 3:
++                discipline = Discipline.BREASTSTROKE;
++                break;
++            case 4:
++                discipline = Discipline.BACKSTROKE;
++                break;
++            default:
++                discipline = null;
++        }
++        analyse.setDailyTopFive(new Performance(Subscription.payingMembers.get(memberSelect - 1).getName(), Subscription.payingMembers.get(memberSelect - 1).getAge(), minutes, seconds, milliseconds), discipline,Subscription.payingMembers.get(memberSelect - 1).getTeam());
+     }
+ }
+Index: src/Trainer/Analysis.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Analysis {\r\n    ArrayList<Performance> competitionTopFive;\r\n    ArrayList<Performance> dailyTopFive;\r\n\r\n    public ArrayList<Performance> getCompetitionTopFive() {\r\n        return competitionTopFive;\r\n    }\r\n\r\n    public void setCompetitionTopFive(ArrayList<Performance> competitionTopFive) {\r\n        this.competitionTopFive = competitionTopFive;\r\n    }\r\n\r\n    public ArrayList<Performance> getDailyTopFive() {\r\n        return dailyTopFive;\r\n    }\r\n\r\n    public void setDailyTopFive(ArrayList<Performance> dailyTopFive) {\r\n        this.dailyTopFive = dailyTopFive;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Analysis.java b/src/Trainer/Analysis.java
+--- a/src/Trainer/Analysis.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/Trainer/Analysis.java	(date 1638909135329)
+@@ -1,24 +1,153 @@
+-package Trainer;
+-
+ import java.util.ArrayList;
+ 
++
+ public class Analysis {
+-    ArrayList<Performance> competitionTopFive;
+-    ArrayList<Performance> dailyTopFive;
++
++    private ArrayList<Performance> dailyTopFiveJunior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveSenior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveCrawlJunior = new ArrayList <>();
++    private ArrayList<Performance> dailyTopFiveCrawlSenior = new ArrayList <>();
++    private ArrayList<Performance> dailyTopFiveButterflyJunior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveButterflySenior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveBreaststrokeJunior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveBreaststrokeSenior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveBackstrokeJunior = new ArrayList<>();
++    private ArrayList<Performance> dailyTopFiveBackstrokeSenior = new ArrayList<>();
++    private ArrayList<Performance> competitionTopFive = new ArrayList<>();
++    int[] checkList = new int[0];
+ 
+     public ArrayList<Performance> getCompetitionTopFive() {
+         return competitionTopFive;
+     }
++    public void setCompetitionTopFive(Performance performance) {
++        competitionTopFive.add(performance);
++        this.competitionTopFive = calculateTopFive(competitionTopFive);
++    }
+ 
+-    public void setCompetitionTopFive(ArrayList<Performance> competitionTopFive) {
+-        this.competitionTopFive = competitionTopFive;
++    public ArrayList<Performance> getDailyTopFive(Discipline discipline, Team team) {
++        switch (discipline) {
++            case CRAWL:
++                if (team == Team.JUNIOR) {
++                    return dailyTopFiveCrawlJunior;
++                } else {
++                    return dailyTopFiveCrawlSenior;
++                }
++            case BUTTERFLY:
++                if (team == Team.JUNIOR) {
++                    return dailyTopFiveButterflyJunior;
++                } else {
++                    return dailyTopFiveButterflySenior;
++                }
++            case BREASTSTROKE:
++                if (team == Team.JUNIOR) {
++                    return dailyTopFiveBreaststrokeJunior;
++                } else {
++                    return dailyTopFiveBreaststrokeSenior;
++                }
++            case BACKSTROKE:
++                if (team == Team.JUNIOR) {
++                    return dailyTopFiveBackstrokeJunior;
++                } else {
++                    return dailyTopFiveBackstrokeSenior;
++                }
++            default:
++                if (team == Team.JUNIOR) {
++                    return dailyTopFiveJunior;
++                } else {
++                    return dailyTopFiveSenior;
++                }
++        }
+     }
+ 
+-    public ArrayList<Performance> getDailyTopFive() {
+-        return dailyTopFive;
++    public void setDailyTopFive(Performance performance, Discipline discipline, Team team) {
++        switch(discipline) {
++            case CRAWL:
++                if (team == Team.JUNIOR) {
++                    dailyTopFiveCrawlJunior.add(performance);
++                    this.dailyTopFiveCrawlJunior = calculateTopFive(dailyTopFiveCrawlJunior);
++                } else {
++                    dailyTopFiveCrawlSenior.add(performance);
++                    this.dailyTopFiveCrawlSenior = calculateTopFive(dailyTopFiveCrawlSenior);
++                }
++                break;
++            case BUTTERFLY:
++                if (team == Team.JUNIOR) {
++                    dailyTopFiveButterflyJunior.add(performance);
++                    this.dailyTopFiveButterflyJunior = calculateTopFive(dailyTopFiveButterflyJunior);
++                } else {
++                    dailyTopFiveButterflySenior.add(performance);
++                    this.dailyTopFiveButterflySenior = calculateTopFive(dailyTopFiveButterflySenior);
++                }
++                break;
++            case BACKSTROKE:
++                if (team == Team.JUNIOR) {
++                    dailyTopFiveBackstrokeJunior.add(performance);
++                    this.dailyTopFiveBackstrokeJunior = calculateTopFive(dailyTopFiveBackstrokeJunior);
++                } else {
++                    dailyTopFiveBackstrokeSenior.add(performance);
++                    this.dailyTopFiveBackstrokeSenior = calculateTopFive(dailyTopFiveBackstrokeSenior);
++                }
++                break;
++            case BREASTSTROKE:
++                if (team == Team.JUNIOR) {
++                    dailyTopFiveBreaststrokeJunior.add(performance);
++                    this.dailyTopFiveBreaststrokeJunior = calculateTopFive(dailyTopFiveBreaststrokeJunior);
++                } else {
++                    dailyTopFiveBreaststrokeSenior.add(performance);
++                    this.dailyTopFiveBreaststrokeJunior = calculateTopFive(dailyTopFiveBreaststrokeSenior);
++                }
++                break;
++            default:
++                if (team == Team.JUNIOR) {
++                    dailyTopFiveJunior.add(performance);
++                    this.dailyTopFiveJunior = calculateTopFive(dailyTopFiveJunior);
++                } else {
++                    dailyTopFiveSenior.add(performance);
++                    this.dailyTopFiveSenior = calculateTopFive(dailyTopFiveSenior);
++                }
++        }
+     }
+ 
+-    public void setDailyTopFive(ArrayList<Performance> dailyTopFive) {
+-        this.dailyTopFive = dailyTopFive;
++    private ArrayList<Performance> calculateTopFive(ArrayList<Performance> topFive) {
++        ArrayList<Performance> performance = new ArrayList<>();
++        ArrayList<Performance> topFive2 = new ArrayList<>();
++
++        if (topFive.size() > 5) {
++            for (int i = 0; i < 5; i++) {
++                performance.add(topFive.get(i));
++            }
++        } else {
++            for (int i = 0; i < topFive.size(); i++) {
++                performance.add(topFive.get(i));
++            }
++        }
++        if(performance.size() > 1) {
++            for (int i = 0; i < topFive.size(); i++) {
++
++                for (int u = i + 1; u < topFive.size(); u++) {
++                    if (performance.get(i).getTime() > performance.get(u).getTime()) {
++                        topFive2.add(i, performance.get(u));
++                    }
++                }
++                if (i == performance.size() - 1) {
++                    topFive2.add(performance.get(i));
++                }
++            }
++        } else {
++            topFive2.add(performance.get(0));
++        }
++        return topFive2;
++    }
++
++    public boolean memberAdded(int ID, ArrayList<Performance> memberList) {
++        checkList = new int[checkList.length + 1];
++        checkList[checkList.length - 1] = ID;
++        boolean trueOrFalse = false;
++        for (int i = 0; i < memberList.size(); i++) {
++            if (checkList[i] == ID) {
++                trueOrFalse = true;
++            }
++        }
++        return trueOrFalse;
+     }
+ }
+Index: src/Trainer/Performance.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\npackage Chairman;\r\n\r\npublic class Performance {\r\n    Member member;\r\n    double time;\r\n    Team team;\r\n    Performance(Member member, double time, Team team) {\r\n        this.member = member;\r\n        this.time = time;\r\n        this.team = team;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Performance.java b/src/Trainer/Performance.java
+--- a/src/Trainer/Performance.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/Trainer/Performance.java	(date 1638909241379)
+@@ -1,13 +1,29 @@
+-package Trainer;
+-package Chairman;
+ 
+ public class Performance {
+-    Member member;
+-    double time;
+-    Team team;
+-    Performance(Member member, double time, Team team) {
+-        this.member = member;
+-        this.time = time;
+-        this.team = team;
++    private String name;
++    private int age;
++    private int minutes;
++    private int seconds;
++    private int milliseconds;
++
++    Performance(String name, int age, int minutes, int seconds, int milliseconds) {
++        this.name = name;
++        this.age = age;
++        this.minutes = minutes;
++        this.seconds = seconds;
++        this.milliseconds = milliseconds;
++    }
++
++    public String getName() {
++        return name;
+     }
++
++    public int getAge() {
++        return age;
++    }
++
++    public double getTime() {
++        return ((double)minutes + (double)seconds/60 + (double)milliseconds/(60*1000));
++    }
++    public String timeFormatted() {return String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);}
+ }
+Index: src/Trainer/Competition.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Competition {\r\n    private Discipline discipline;\r\n    private int time;\r\n    private String place;\r\n    private boolean juniorOrSenior;\r\n    private ArrayList<Performance> memberList;\r\n\r\n    public Competition(Discipline discipline, int time, String place, boolean juniorOrSenior) {\r\n\r\n    }\r\n\r\n    public void setDiscipline(Trainer.Discipline discipline) {\r\n        this.discipline = discipline;\r\n    }\r\n\r\n    public void setTime(int time) {\r\n        this.time = time;\r\n    }\r\n\r\n    public void setPlace(String place) {\r\n        this.place = place;\r\n    }\r\n\r\n    public void setJuniorOrSenior(int juniorOrSenior) {\r\n        this.juniorOrSenior = juniorOrSenior;\r\n    }\r\n\r\n    public void setMemberList(ArrayList<Trainer.Performance> memberList) {\r\n        this.memberList = memberList;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Competition.java b/src/Trainer/Competition.java
+--- a/src/Trainer/Competition.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/Trainer/Competition.java	(date 1638909157814)
+@@ -1,35 +1,147 @@
+-package Trainer;
+ 
++import java.util.Scanner;
+ import java.util.ArrayList;
+ 
+ public class Competition {
++    private String name;
+     private Discipline discipline;
+-    private int time;
++    private String time;
+     private String place;
+-    private boolean juniorOrSenior;
++    private Team team;
++    private Scanner sc = new Scanner(System.in);
+     private ArrayList<Performance> memberList;
+-
+-    public Competition(Discipline discipline, int time, String place, boolean juniorOrSenior) {
++    private Analysis analyse = new Analysis();
+ 
+-    }
+-
+-    public void setDiscipline(Trainer.Discipline discipline) {
++    public Competition(String name, Discipline discipline, String time, String place, Team team, ArrayList<Performance> memberList) {
++        this.name = name;
+         this.discipline = discipline;
+-    }
+-
+-    public void setTime(int time) {
+         this.time = time;
+-    }
+-
+-    public void setPlace(String place) {
+         this.place = place;
+-    }
+-
+-    public void setJuniorOrSenior(int juniorOrSenior) {
+-        this.juniorOrSenior = juniorOrSenior;
+-    }
+-
+-    public void setMemberList(ArrayList<Trainer.Performance> memberList) {
++        this.team = team;
+         this.memberList = memberList;
++
++    }
++
++    public void printCompetitionDetails() {
++        System.out.println("*******************************");
++        System.out.println("Competition name: " + name);
++        System.out.println("Place: " + place);
++        System.out.println("Time: " + time);
++        System.out.println("Team: " + team);
++        System.out.println("Discipline: " + discipline);
++        System.out.println("*******************************");
++        System.out.println("Competitors: ");
++        printCompetitorList();
++        System.out.println("*******************************");
++    }
++
++    public void logPerformance() {
++        int minutes;
++        int seconds;
++        int milliseconds;
++
++        System.out.println("Choose a competitor, of which you want to add a performance.");
++        printCompetitorList();
++        int selectMember = sc.nextInt();
++        sc.nextLine();
++        System.out.println("Insert minutes: ");
++        minutes = sc.nextInt();
++        sc.nextLine();
++        System.out.println("Insert seconds");
++        seconds = sc.nextInt();
++        sc.nextLine();
++        System.out.println("Insert milliseconds");
++        milliseconds = sc.nextInt();
++        sc.nextLine();
++        analyse.setCompetitionTopFive(new Performance(memberList.get(selectMember - 1).getName(),memberList.get(selectMember - 1).getAge(),minutes,seconds,milliseconds));
++    }
++
++    public void printCompetitorList() {
++        if (memberList.size() > 0) {
++            System.out.println("Name:\t\t\tAge:");
++            for (int i = 0; i < memberList.size(); i++) {
++                System.out.println((i + 1) + ". " + memberList.get(i).getName() + "\t\t\t" + memberList.get(i).getAge());
++            }
++        } else {
++            System.out.println("No participants has been registered");
++        }
++    }
++
++    public void printTopFiveList() {
++        System.out.println("Name:\t\t\tTime(mm/ss/msmsms):");
++        for (int i = 0; i < analyse.getCompetitionTopFive().size(); i++) {
++            int listNumber = (i + 1);
++            String name = analyse.getCompetitionTopFive().get(i).getName();
++            String time = analyse.getCompetitionTopFive().get(i).timeFormatted();
++            System.out.printf("%d. %s\t\t\t%s\n",listNumber,name,time);
++        }
++
++    }
++
++    public void setDiscipline(Discipline discipline) {
++        this.discipline = discipline;
++    }
++
++    public Discipline getDiscipline() {
++        return discipline;
++    }
++
++    public void setTime(int hour, int minute) {
++        this.time = String.format("%02d:%02d", hour, minute);
++    }
++
++    public void setPlace(String place) {
++        this.place = place;
++    }
++
++    public void setTeam(Team team) {
++        this.team = team;
++    }
++
++    public Team getTeam() {
++        return team;
++    }
++
++    public void addCompetitors(ArrayList<Performance> memberList) {
++        ArrayList<Performance> membersToAdd = new ArrayList<>();
++        boolean run = true;
++        System.out.println("Select a competitor for the competition");
++        do {
++            for (int i = 0; i < memberList.size(); i++) {
++                System.out.println((i + 1) + ". " + memberList.get(i).getName());
++
++            }
++            int selectOption = sc.nextInt();
++            sc.nextLine();
++            if (selectOption == 0) {
++                run = false;
++            } else {
++                membersToAdd.add(memberList.get(selectOption - 1));
++                memberList.remove(selectOption - 1);
++            }
++        } while (run);
++    }
++
++    public void removeCompetitor() {
++        boolean run = true;
++        do {
++            System.out.println("Choose which competitor you want to remove. Insert \"0\" to exit.");
++            printCompetitorList();
++            try {
++                int selectOption = sc.nextInt();
++                sc.nextLine();
++                if (selectOption == 0) {
++                    run = false;
++                } else {
++                    memberList.remove(selectOption - 1);
++                }
++            } catch (Exception e) {
++                System.out.println("Illegal value. Try again");
++            }
++        } while (run);
++    }
++
++    public String getName() {
++        return name;
+     }
+ }
+Index: src/Trainer/Discipline.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\n\r\npublic enum Discipline {\r\n    CRAWL,\r\n    BUTTERFLY,\r\n    BREASTSTROKE,\r\n    BACKSTROKE;\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Discipline.java b/src/Trainer/Discipline.java
+--- a/src/Trainer/Discipline.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/Trainer/Discipline.java	(date 1638909172969)
+@@ -1,5 +1,3 @@
+-package Trainer;
+-
+ public enum Discipline {
+     CRAWL,
+     BUTTERFLY,
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"5acdbb23-3555-40bd-ba0d-a3f62f098b4a\" name=\"Changes\" comment=\"conflict\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Trainer/Analysis.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Trainer/Analysis.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Trainer/Competition.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Trainer/Competition.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Trainer/Performance.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Trainer/Performance.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Trainer/Trainer.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Trainer/Trainer.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Enum\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"21GzV6Sfx4BiPYChSRBxGFwk8Aw\" />\r\n  <component name=\"ProjectLevelVcsManager\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n    <option name=\"showMembers\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"jdk.selected.JAVA_MODULE\" value=\"16\" />\r\n    <property name=\"project.structure.last.edited\" value=\"Modules\" />\r\n    <property name=\"project.structure.proportion\" value=\"0.15\" />\r\n    <property name=\"project.structure.side.proportion\" value=\"0.2\" />\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration default=\"true\" type=\"JetRunConfigurationType\">\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"KotlinStandaloneScriptRunConfigurationType\">\r\n      <option name=\"filePath\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"5acdbb23-3555-40bd-ba0d-a3f62f098b4a\" name=\"Changes\" comment=\"\" />\r\n      <created>1637582233354</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1637582233354</updated>\r\n      <workItem from=\"1637582235398\" duration=\"3594000\" />\r\n      <workItem from=\"1637658563338\" duration=\"545000\" />\r\n      <workItem from=\"1637831017047\" duration=\"10000\" />\r\n      <workItem from=\"1638209634174\" duration=\"2088000\" />\r\n      <workItem from=\"1638211751816\" duration=\"152000\" />\r\n      <workItem from=\"1638211937370\" duration=\"98000\" />\r\n      <workItem from=\"1638212050444\" duration=\"7980000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"j\">\r\n      <created>1638210674152</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1638210674152</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"conflict\">\r\n      <created>1638211101460</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1638211101460</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"conflict\">\r\n      <created>1638265007942</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1638265007942</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"j\" />\r\n    <MESSAGE value=\"conflict\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"conflict\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/.idea/workspace.xml	(date 1638825782144)
+@@ -2,11 +2,18 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="5acdbb23-3555-40bd-ba0d-a3f62f098b4a" name="Changes" comment="conflict">
++      <change afterPath="$PROJECT_DIR$/src/Trainer/Main.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/Trainer/Member.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/Trainer/Stopwatch.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/Trainer/Subscription.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/Trainer/Team.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/src/Trainer/TypeOfSwimmer.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Trainer/Analysis.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Analysis.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Trainer/Competition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Competition.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Trainer/Performance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Performance.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Trainer/Trainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Trainer.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/ui/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/Menu.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -16,13 +23,21 @@
+   <component name="FileTemplateManagerImpl">
+     <option name="RECENT_TEMPLATES">
+       <list>
+-        <option value="Enum" />
+         <option value="Class" />
++        <option value="Enum" />
+       </list>
+     </option>
+   </component>
+   <component name="Git.Settings">
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++  </component>
++  <component name="GitSEFilterConfiguration">
++    <file-type-list>
++      <filtered-out-file-type name="LOCAL_BRANCH" />
++      <filtered-out-file-type name="REMOTE_BRANCH" />
++      <filtered-out-file-type name="TAG" />
++      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
++    </file-type-list>
+   </component>
+   <component name="ProjectId" id="21GzV6Sfx4BiPYChSRBxGFwk8Aw" />
+   <component name="ProjectLevelVcsManager">
+@@ -37,12 +52,26 @@
+     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+     <property name="WebServerToolWindowFactoryState" value="false" />
++    <property name="extract.method.default.visibility" value="private" />
+     <property name="jdk.selected.JAVA_MODULE" value="16" />
+-    <property name="project.structure.last.edited" value="Modules" />
++    <property name="project.structure.last.edited" value="Project" />
+     <property name="project.structure.proportion" value="0.15" />
+     <property name="project.structure.side.proportion" value="0.2" />
+   </component>
+   <component name="RunManager">
++    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
++      <option name="MAIN_CLASS_NAME" value="Trainer.Main" />
++      <module name="the-dolphin-project" />
++      <extension name="coverage">
++        <pattern>
++          <option name="PATTERN" value="Trainer.*" />
++          <option name="ENABLED" value="true" />
++        </pattern>
++      </extension>
++      <method v="2">
++        <option name="Make" enabled="true" />
++      </method>
++    </configuration>
+     <configuration default="true" type="JetRunConfigurationType">
+       <method v="2">
+         <option name="Make" enabled="true" />
+@@ -54,6 +83,11 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
++    <recent_temporary>
++      <list>
++        <item itemvalue="Application.Main" />
++      </list>
++    </recent_temporary>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+@@ -70,6 +104,16 @@
+       <workItem from="1638211751816" duration="152000" />
+       <workItem from="1638211937370" duration="98000" />
+       <workItem from="1638212050444" duration="7980000" />
++      <workItem from="1638284884759" duration="8450000" />
++      <workItem from="1638359399152" duration="4617000" />
++      <workItem from="1638366397620" duration="206000" />
++      <workItem from="1638366646140" duration="289000" />
++      <workItem from="1638366996113" duration="49307000" />
++      <workItem from="1638797233357" duration="40000" />
++      <workItem from="1638797306436" duration="11000" />
++      <workItem from="1638797349747" duration="9000" />
++      <workItem from="1638797384264" duration="20000" />
++      <workItem from="1638797446278" duration="2079000" />
+     </task>
+     <task id="LOCAL-00001" summary="j">
+       <created>1638210674152</created>
+@@ -92,7 +136,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1638265007942</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="conflict">
++      <created>1638291833850</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1638291833850</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+Index: src/Trainer/Team.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Team.java b/src/Trainer/Team.java
+new file mode 100644
+--- /dev/null	(date 1638909258624)
++++ b/src/Trainer/Team.java	(date 1638909258624)
+@@ -0,0 +1,4 @@
++public enum Team {
++    SENIOR,
++    JUNIOR;
++}
+Index: src/Trainer/TypeOfSwimmer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/TypeOfSwimmer.java b/src/Trainer/TypeOfSwimmer.java
+new file mode 100644
+--- /dev/null	(date 1638909360162)
++++ b/src/Trainer/TypeOfSwimmer.java	(date 1638909360162)
+@@ -0,0 +1,4 @@
++public enum TypeOfSwimmer {
++    CASUAL,
++    COMPETITIVE;
++}
+Index: src/ui/Menu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ui;\r\n\r\npublic class Menu {\r\n    public static void main(String[] args) {\r\n        System.out.println(\"hallo world\");\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/ui/Menu.java b/src/ui/Menu.java
+--- a/src/ui/Menu.java	(revision 707afdd97bc1851cb28f3db8b3686beb04136f1c)
++++ b/src/ui/Menu.java	(date 1638796350840)
+@@ -1,7 +1,8 @@
+ package ui;
+ 
+ public class Menu {
+-    public static void main(String[] args) {
++    /*public static void
++    main(String[] args) {
+         System.out.println("hallo world");
+-    }
++    }*/
+ }
+Index: src/Trainer/Member.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Member.java b/src/Trainer/Member.java
+new file mode 100644
+--- /dev/null	(date 1638909230679)
++++ b/src/Trainer/Member.java	(date 1638909230679)
+@@ -0,0 +1,42 @@
++
++
++public class Member {
++    private int age;
++    private String name;
++    private String gender;
++    private String email;
++    private TypeOfSwimmer swimmer;
++    private Team team;
++    private int ID;
++
++    Member(int age, String name, String gender, String email, TypeOfSwimmer swimmer, Team team) {
++        this.age = age;
++        this.name = name;
++        this.gender = gender;
++        this.email = email;
++        this.swimmer = swimmer;
++        this.team = team;
++    }
++
++    public int getID() {
++        return ID;
++    }
++
++
++    public int getAge() {
++        return age;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public TypeOfSwimmer getSwimmer() {
++        return swimmer;
++    }
++
++    public Team getTeam() {
++        return team;
++    }
++
++}

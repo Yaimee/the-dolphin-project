@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5acdbb23-3555-40bd-ba0d-a3f62f098b4a" name="Changes" comment="conflict">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Trainer/Analysis.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Analysis.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Trainer/Competition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Competition.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Trainer/Performance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Performance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Trainer/Trainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Trainer/Trainer.java" afterDir="false" />
-    </list>
+    <list default="true" id="5acdbb23-3555-40bd-ba0d-a3f62f098b4a" name="Changes" comment="conflict" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
