@@ -1,5 +1,6 @@
 package accounting;
 
+import Chairman.Chairman;
 import Chairman.DataHandler;
 import Chairman.Member;
 import Chairman.TypeOfSwimmer;
@@ -11,6 +12,8 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class Subscription {
+
+    private Chairman ch = new Chairman();
 
     static int numberOfJuniorCasual = 0;
     static int numberOfSeniorCasual = 0;
@@ -63,27 +66,40 @@ public class Subscription {
         return numberOfFiles + 1;
     }
 
-    public void changeMembershipToPassive(Member member) {
+    //added code for clarity - should be deleted upon completion
+    public void changeMembershipToPassive(int membershipId) {
+        Member member = ch.getDataHandler().findMemberByID(membershipId);
         int age = member.getAge();
         TypeOfSwimmer swimmer = member.getSwimmer();
 
         if (age < 18 || age >= 60) {
             if (age >= 60) {
+                System.out.println(numberOfPassiveMemberships);
                 numberOfSeniorRetired --;
+                System.out.println(numberOfPassiveMemberships);
             } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
+                System.out.println(numberOfJuniorCasual);
                 numberOfJuniorCasual --;
+                System.out.println(numberOfJuniorCasual);
             } else {
+                System.out.println(numberOfJuniorCompetitor);
                 numberOfJuniorCompetitor --;
+                System.out.println(numberOfJuniorCompetitor);
             }
         } else {
             if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
+                System.out.println(numberOfSeniorCasual);
                 numberOfSeniorCasual --;
+                System.out.println(numberOfSeniorCasual);
             } else {
+                System.out.println(numberOfSeniorCompetitor);
                 numberOfSeniorCompetitor --;
+                System.out.println(numberOfSeniorCompetitor);
             }
         }
-
+        System.out.println(numberOfPassiveMemberships);
         numberOfPassiveMemberships ++;
+        System.out.println(numberOfPassiveMemberships);
     }
 
     public int getProjectedYearlyRevenue() {
