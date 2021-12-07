@@ -87,10 +87,10 @@ class Application{
 
                 if(username.equals("accountant") && password.equals("password2")) {
                     wrongLogin = false;
+                    accountantMenu();
                 } else {
                     System.out.println("Invalid input\n");
                 }
-                accountantMenu();
             }
         } else if(oneTwoOrThree == 3) {
             while(wrongLogin) {
@@ -101,10 +101,10 @@ class Application{
 
                 if(username.equals("trainer") && password.equals("password3")) {
                     wrongLogin = false;
+                    trainerMenu();
                 } else {
                     System.out.println("Invalid input\n");
                 }
-                trainerMenu();
             }
         }
     }
