@@ -13,7 +13,7 @@ public class Competition {
 
     }
 
-    public void setDiscipline(Trainer.Discipline discipline) {
+    public void setDiscipline(Discipline discipline) {
         this.discipline = discipline;
     }
 
@@ -25,11 +25,11 @@ public class Competition {
         this.place = place;
     }
 
-    public void setJuniorOrSenior(int juniorOrSenior) {
+    public void setJuniorOrSenior(boolean juniorOrSenior) { //Ændrede parameteren fra 'int' til 'boolean' da det gav problemer -Theis
         this.juniorOrSenior = juniorOrSenior;
     }
 
-    public void setMemberList(ArrayList<Trainer.Performance> memberList) {
+    public void setMemberList(ArrayList<Performance> memberList) {
         this.memberList = memberList;
     }
 }
