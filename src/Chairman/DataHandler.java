@@ -80,6 +80,12 @@ public class DataHandler {
         return foundMembers;
     }
 
+    public Member findMemberByID(int id){
 
+        for(Member member : memberList)
+            if(member.getID() == id)
+                return member;
+        return null;
+    }
 
 }

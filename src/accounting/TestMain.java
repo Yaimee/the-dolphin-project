@@ -16,7 +16,9 @@ public class TestMain {
 
         ch.getDataHandler().initMemberJson(); // Init existing members
 
-        Member nonPayingMember = ch.getDataHandler().findMembersByName("weeb").get(0);
+        //ac.InitiateMembershipSweep();
+
+        Member nonPayingMember = ch.getDataHandler().findMemberByID(3);
 
         ac.InitiateAddMemberToList(nonPayingMember);
 

@@ -4,10 +4,14 @@ import Chairman.DataHandler;
 import Chairman.Member;
 
 public class Accountant {
-    private String username;
-    private String password;
+    private String username = "accountant";
+    private String password = "password";
     private final Subscription sub = new Subscription();
 
+
+    public void InitiateMembershipSweep() {
+        sub.membershipSweep();
+    }
 
     public void InitiateAddMemberToList(Member member) {
         sub.addMemberToList(member);
