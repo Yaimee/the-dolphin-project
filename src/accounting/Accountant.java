@@ -5,12 +5,19 @@ import Chairman.Member;
 import java.util.Scanner;
 
 public class Accountant {
-    //private String username = "accountant";
-    //private String password = "password";
+    private final String username = "";
+    private final String password = "";
     private final Subscription sub = new Subscription();
 
     static Scanner scan = new Scanner(System.in);
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public void InitiateMembershipSweep() {
         sub.membershipSweep();

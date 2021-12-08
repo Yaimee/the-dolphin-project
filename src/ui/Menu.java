@@ -60,8 +60,10 @@ class Application{
         }
     }
 
-    public void login(int oneTwoOrThree, String username, String password) {
+    public void login(int oneTwoOrThree) {
 
+        String username = "";
+        String password = "";
         boolean wrongLogin = true;
 
             while(wrongLogin) {
@@ -69,6 +71,21 @@ class Application{
                 String usernameInput = scan.nextLine();
                 System.out.print("Password: ");
                 String passwordInput = scan.nextLine();
+
+                switch (oneTwoOrThree) {
+                    case 1:
+                        username = ch.getUsername();
+                        password = ch.getPassword();
+                        break;
+                    case 2:
+                        username = ac.getUsername();
+                        password = ac.getPassword();
+                        break;
+                    case 3:
+                        //username = tr.getUsername();
+                        //password = tr.getPassword();
+                        break;
+                }
 
                 if(usernameInput.equals(username) && passwordInput.equals(password)) {
                     wrongLogin = false;
@@ -155,9 +172,9 @@ class Application{
         int choiceOfPrivilege = chooseFromOptions(4);
 
         switch (choiceOfPrivilege) {
-            case 1 -> login(1, "", "");
-            case 2 -> login(2, "", "");
-            case 3 -> login(3, "", "");
+            case 1 -> login(1);
+            case 2 -> login(2);
+            case 3 -> login(3);
             case 4 -> System.out.println();
         }
     }
