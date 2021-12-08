@@ -1,8 +1,7 @@
-package Chairman;
+/*
 import Trainer.Performance;
-
+import Trainer.Discipline;
 import java.util.ArrayList;
-
 
 public class Analysis {
 
@@ -154,3 +153,4 @@ public class Analysis {
         return trueOrFalse;
     }
 }
+*/
