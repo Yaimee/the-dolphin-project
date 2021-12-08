@@ -8,11 +8,11 @@ public class Trainer {
     ArrayList<Competition> competitions = new ArrayList<>();
     String username;
     String password;
-    /*
+
     Trainer (String username, String password) {
             this.username = username;
             this.password = password;
-    }*/
+    }
 
     public void displayCasualTopFive(Discipline discipline, Team team) {
         System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
@@ -163,3 +163,4 @@ public class Trainer {
         analyse.setDailyTopFive(new Performance(Subscription.payingMembers.get(memberSelect - 1).getName(), Subscription.payingMembers.get(memberSelect - 1).getAge(), minutes, seconds, milliseconds), discipline,Subscription.payingMembers.get(memberSelect - 1).getTeam());
     }
 }
+*/
