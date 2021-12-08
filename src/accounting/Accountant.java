@@ -5,8 +5,8 @@ import Chairman.Member;
 import java.util.Scanner;
 
 public class Accountant {
-    private String username = "accountant";
-    private String password = "password";
+    //private String username = "accountant";
+    //private String password = "password";
     private final Subscription sub = new Subscription();
 
     static Scanner scan = new Scanner(System.in);
