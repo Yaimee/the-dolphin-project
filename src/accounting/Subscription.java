@@ -4,9 +4,11 @@ import Chairman.Chairman;
 import Chairman.DataHandler;
 import Chairman.Member;
 import Chairman.TypeOfSwimmer;
+import Trainer.Performance;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -21,7 +23,8 @@ public class Subscription {
     static int numberOfSeniorCompetitor = 0;
     static int numberOfSeniorRetired = 0;
     static int numberOfPassiveMemberships = 0;
-
+    //lille tilføjelse for at undgå errors i min egen kode. Kh Rasmus
+    public static ArrayList<Member> payingMembers = new ArrayList<>();
 
     public void createSubscription(Member member) {
         getTypeOfSubscription(member);

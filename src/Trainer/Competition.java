@@ -1,7 +1,6 @@
-/*
 package Trainer;
-import Chairman.Team;
-import Trainer.Analysis;
+import Chairman.*;
+import accounting.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -56,14 +55,15 @@ public class Competition {
         System.out.println("Insert milliseconds");
         milliseconds = sc.nextInt();
         sc.nextLine();
-        analyse.setCompetitionTopFive(new Performance(memberList.get(selectMember - 1).getName(),memberList.get(selectMember - 1).getAge(),minutes,seconds,milliseconds));
+        analyse.setCompetitionTopFive(new Performance(memberList.get(selectMember - 1).getName(),memberList.get(selectMember - 1).getAge(),minutes,seconds,milliseconds,memberList.get(selectMember - 1).getID()));
     }
 
     public void printCompetitorList() {
-        if (memberList.size() > 0) {
-            System.out.println("Name:\t\t\tAge:");
+        if (!memberList.isEmpty()) {
+            System.out.println("Name:\t\t\t\tAge:");
             for (int i = 0; i < memberList.size(); i++) {
-                System.out.println((i + 1) + ". " + memberList.get(i).getName() + "\t\t\t" + memberList.get(i).getAge());
+                System.out.printf((i + 1) + ". " + analyse.padRightSpaces(memberList.get(i).getName(), 17));
+                System.out.println((memberList.get(i).getAge()));
             }
         } else {
             System.out.println("No participants has been registered");
@@ -71,12 +71,10 @@ public class Competition {
     }
 
     public void printTopFiveList() {
-        System.out.println("Name:\t\t\tTime(mm/ss/msmsms):");
+        System.out.println("Name:\t\t\t\tTime(mm/ss/msmsms):");
         for (int i = 0; i < analyse.getCompetitionTopFive().size(); i++) {
-            int listNumber = (i + 1);
-            String name = analyse.getCompetitionTopFive().get(i).getName();
-            String time = analyse.getCompetitionTopFive().get(i).timeFormatted();
-            System.out.printf("%d. %s\t\t\t%s\n",listNumber,name,time);
+            System.out.printf((i + 1) + ". " +analyse.padRightSpaces(analyse.getCompetitionTopFive().get(i).getName(), 17));
+            System.out.println(analyse.getCompetitionTopFive().get(i).timeFormatted());
         }
 
     }
@@ -105,24 +103,47 @@ public class Competition {
         return team;
     }
 
-    public void addCompetitors(ArrayList<Performance> memberList) {
-        ArrayList<Performance> membersToAdd = new ArrayList<>();
+    public void addCompetitors(ArrayList<Performance> competitors) {
         boolean run = true;
-        System.out.println("Select a competitor for the competition");
-        do {
-            for (int i = 0; i < memberList.size(); i++) {
-                System.out.println((i + 1) + ". " + memberList.get(i).getName());
-
+        if (competitors.isEmpty()) {
+            System.out.println("No competitors to add");
+        } else {
+            ArrayList<Performance> competitorsToAdd = new ArrayList<>();
+            boolean added = false;
+            for (int i = 0; i < competitors.size(); i++) {
+                /*analyse.memberAdded(competitors.get(i).getID());*/
+                for(int u = 0; u < analyse.getCheckList().length; u++) {
+                    if (analyse.getCheckList()[u] == competitors.get(i).getID()) {
+                        added = true;
+                    }
+                }
+                if (!added) {
+                    competitorsToAdd.add(competitors.get(i));
+                    analyse.memberAdded(competitors.get(i).getID());
+                }
             }
-            int selectOption = sc.nextInt();
-            sc.nextLine();
-            if (selectOption == 0) {
-                run = false;
-            } else {
-                membersToAdd.add(memberList.get(selectOption - 1));
-                memberList.remove(selectOption - 1);
-            }
-        } while (run);
+            System.out.println("Select a competitor for the competition. Insert \"0\" to brexit");
+            do {
+                System.out.println("Name:\t\t\t\tTime:");
+                for (int i = 0; i < competitorsToAdd.size(); i++) {
+                    System.out.printf((i + 1) +". " + analyse.padRightSpaces(competitorsToAdd.get(i).getName(), 17));
+                    System.out.println(competitorsToAdd.get(i).timeFormatted());
+                }
+                int selectOption = sc.nextInt();
+                sc.nextLine();
+                if (selectOption == 0) {
+                    run = false;
+                } else {
+                    memberList.add(competitorsToAdd.get(selectOption - 1));
+                    System.out.println(competitorsToAdd.get(selectOption - 1).getName() + " added");
+                    competitorsToAdd.remove(selectOption - 1);
+                }
+                if(competitorsToAdd.isEmpty()) {
+                    System.out.println("All competitors has been added");
+                    run = false;
+                }
+            } while (run);
+        }
     }
 
     public void removeCompetitor() {
@@ -144,8 +165,11 @@ public class Competition {
         } while (run);
     }
 
+    public ArrayList<Performance> getMemberList() {
+        return memberList;
+    }
+
     public String getName() {
         return name;
     }
 }
-*/
