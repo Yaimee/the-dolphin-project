@@ -9,8 +9,8 @@ import java.nio.file.StandardOpenOption;
 public class Chairman {
     private String username;
     private String password;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final DataHandler dh = new DataHandler("members/members.json"); // adding datahandler XD
+    //private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final DataHandler dh = DataHandler.getInstance();
 
     public void createNewMember(Member member){
         String text = "";
@@ -29,13 +29,10 @@ public class Chairman {
             e.printStackTrace();
         }
 
-
+        dh.setFilePath("members/members.json");
         dh.addMemberToList(member);
         dh.writeMembers();
         System.out.println("Added member: " + member.getName());
     }
 
-    public DataHandler getDataHandler() {
-        return dh;
-    }
 }

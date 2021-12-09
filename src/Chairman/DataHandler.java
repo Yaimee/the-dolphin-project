@@ -12,13 +12,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DataHandler {
-    private final String filePath;
-    private final ArrayList<Member> memberList = new ArrayList<Member>();
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public DataHandler(String filePath) {
-        this.filePath = filePath;
-    }
+    //Singleton instance
+    private static DataHandler single_instance = null;
+    // Filepath
+    private String filePath = "";
+    // List of paying members
+    private final ArrayList<Member> memberList = new ArrayList<Member>();
+    // List of non paying members
+    //private final ArrayList<Member> nonPayingMemberList = new ArrayList<Member>();
+    //  Du bliver nødt til at adde en ny arraylist, også lave metoder tilhørende den arraylist for at kunne tilføje/slette
+    // Json writer object
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public void writeMembers() {
 
@@ -88,4 +93,30 @@ public class DataHandler {
         return null;
     }
 
+    public ArrayList<Integer> getMemberIDsByName(String name){
+        ArrayList<Integer> foundIDs = new ArrayList<>();
+
+        for (Member member : memberList)
+            if(member.getName().matches(name))
+                foundIDs.add(member.getID());
+
+        return foundIDs;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    private DataHandler()
+    {}
+
+    public static DataHandler getInstance()
+    {
+        if (single_instance == null)
+            single_instance = new DataHandler();
+
+        return single_instance;
+    }
 }
+
+

@@ -49,7 +49,9 @@ public class Subscription {
 
     public void addMemberToList(Member member) {
         int nonPayingMemberId = generateId();
-        DataHandler dh = new DataHandler("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
+        //DataHandler dh = new DataHandler("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
+        DataHandler dh = DataHandler.getInstance();
+        dh.setFilePath("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
         dh.addMemberToList(member);
         dh.writeMembers();
         //dh.deleteMember(member.getID());
@@ -68,7 +70,7 @@ public class Subscription {
 
     //added code for clarity - should be deleted upon completion
     public void changeMembershipToPassive(int membershipId) {
-        Member member = ch.getDataHandler().findMemberByID(membershipId);
+        Member member = DataHandler.getInstance().findMemberByID(membershipId);
         int age = member.getAge();
         TypeOfSwimmer swimmer = member.getSwimmer();
 

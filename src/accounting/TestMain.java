@@ -1,7 +1,6 @@
 package accounting;
 
-import Chairman.Chairman;
-import Chairman.Member;
+import Chairman.*;
 import Chairman.Team;
 import Chairman.TypeOfSwimmer;
 
@@ -14,11 +13,11 @@ public class TestMain {
         Chairman ch = new Chairman();
         Accountant ac = new Accountant();
 
-        ch.getDataHandler().initMemberJson(); // Init existing members
+        DataHandler.getInstance().initMemberJson(); // Init existing members
 
         //ac.InitiateMembershipSweep();
 
-        Member nonPayingMember = ch.getDataHandler().findMemberByID(3);
+        Member nonPayingMember = DataHandler.getInstance().findMemberByID(3);
 
         ac.InitiateAddMemberToList(nonPayingMember);
 

@@ -1,7 +1,7 @@
 package ui;
 
 import Chairman.*;
-import Trainer.Trainer;
+//import Trainer.Trainer;
 import accounting.Accountant;
 
 import java.util.Scanner;
@@ -167,7 +167,7 @@ class Application{
     }
 
     public void run() {
-        ch.getDataHandler().initMemberJson(); // Init existing members
+        DataHandler.getInstance().initMemberJson(); // Init existing members
         ac.InitiateMembershipSweep();
 
         System.out.println("\nChoose from the following three privileges");
