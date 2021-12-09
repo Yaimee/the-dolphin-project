@@ -117,6 +117,10 @@ public class DataHandler {
 
         return single_instance;
     }
+
+    public ArrayList<Member> getMemberList() {
+        return memberList;
+    }
 }
 
 
