@@ -7,10 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class Chairman {
-    private String username;
-    private String password;
+    private String username = "";
+    private String password = "";
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final DataHandler dh = new DataHandler("members/members.json"); // adding datahandler XD
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public void createNewMember(Member member){
         String text = "";
@@ -38,4 +46,6 @@ public class Chairman {
     public DataHandler getDataHandler() {
         return dh;
     }
+
+
 }
