@@ -1,4 +1,6 @@
-/*package Trainer;
+package Trainer;
+import Chairman.*;
+import accounting.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -6,20 +8,18 @@ public class Trainer {
     Analysis analyse = new Analysis();
     Scanner sc = new Scanner(System.in);
     ArrayList<Competition> competitions = new ArrayList<>();
+    DataHandler dh = DataHandler.getInstance();
     String username;
     String password;
-
+    /*
     Trainer (String username, String password) {
             this.username = username;
             this.password = password;
-    }
+    }*/
 
     public void displayCasualTopFive(Discipline discipline, Team team) {
         System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
-        for (int i = 0; i < analyse.getDailyTopFive(discipline, team).size(); i++) {
-            System.out.println((i + 1) + ". " + analyse.getDailyTopFive(discipline, team).get(i).getName() + "\t\t\t" + analyse.getDailyTopFive(discipline, team).get(i).timeFormatted());
-        }
-
+        analyse.printDailyTopFive(discipline,team);
     }
 
     public void createNewCompetition() {
@@ -77,90 +77,95 @@ public class Trainer {
     }
 
     public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
-        System.out.println("Would you like to add competitors from the top five list now? (y/n)");
+        System.out.println("Would you like to add all competitors from the top five list now? (y/n)");
+        System.out.println("To pick them one by one, add them later.");
         String selectOption = sc.nextLine();
-        selectOption.toUpperCase();
-        if(selectOption.equals("N")) {
-            return null;
+        if(selectOption.equalsIgnoreCase("n")) {
+            return new ArrayList<>();
         } else {
             System.out.println("Competitors: ");
             System.out.println("Name:\t\t\tAge:");
-            for(int i = 0; i < analyse.getDailyTopFive(discipline,team).size(); i++) {
-                System.out.println(analyse.getDailyTopFive(discipline,team));
-            }
+            analyse.printDailyTopFive(discipline, team);
             return analyse.getDailyTopFive(discipline,team);
         }
     }
 
-    public void addCompetitiorsLater() {
-        System.out.println("To which competition do you wish to add competitors?");
+    /*public void addCompetitiorsToCompetition() {
+        System.out.println("To which competition would you like to add competitors?");
         for ( int i = 0; i < competitions.size(); i++) {
             System.out.println((i + 1)+ ". " + competitions.get(i).getName());
         }
         int selectOption = sc.nextInt();
         sc.nextLine();
         Discipline discipline = competitions.get(selectOption - 1).getDiscipline();
-        Team team = competitions.get(selectOption).getTeam();
+        Team team = competitions.get(selectOption - 1).getTeam();
         competitions.get(selectOption - 1).addCompetitors(analyse.getDailyTopFive(discipline,team));
         System.out.println("added");
-    }
+    }*/
 
-    public void getCompetitionList(){
+    public boolean getCompetitionList(){
+        boolean trueOrFalse;
         if (competitions.size() == 0) {
             System.out.println("No competitions registered");
+            trueOrFalse = false;
         } else {
+            trueOrFalse = true;
             System.out.println("Competitions registered:");
             for (int i = 0; i < competitions.size(); i++) {
                 System.out.println((i + 1) + ". " + competitions.get(i).getName());
             }
         }
-
+        return trueOrFalse;
     }
 
     public void logDailyPerformance() {
-        Discipline discipline;
-        System.out.println("Members available for logging: ");
-        for(int i = 0; i < Subscription.payingMembers.size(); i++) {
-            System.out.println((i + 1) + ". " + Subscription.payingMembers.get(i).getName());
+        dh.initMemberJson();
+        if (!dh.getMemberList().isEmpty()) {
+            Discipline discipline;
+            System.out.println("Members available for logging: ");
+            for (int i = 0; i < dh.getMemberList().size(); i++) {
+                System.out.println((i + 1) + ". " + dh.getMemberList().get(i).getName());
+            }
+            System.out.println("To select a member, insert the corresponding value");
+            int memberSelect = sc.nextInt();
+            sc.nextLine();
+            System.out.println(dh.getMemberList().get(memberSelect - 1).getName() + " selected.");
+            System.out.println("Insert time for logging");
+            System.out.println("minutes: ");
+            int minutes = sc.nextInt();
+            sc.nextLine();
+            System.out.println("seconds: ");
+            int seconds = sc.nextInt();
+            sc.nextLine();
+            System.out.println("milliseconds: ");
+            int milliseconds = sc.nextInt();
+            sc.nextLine();
+            System.out.println("Insert discipline");
+            System.out.println("1. crawl");
+            System.out.println("2. butterfly");
+            System.out.println("3. breaststroke");
+            System.out.println("4. backstroke");
+            int selectOption = sc.nextInt();
+            sc.nextLine();
+            switch ((selectOption)) {
+                case 1:
+                    discipline = Discipline.CRAWL;
+                    break;
+                case 2:
+                    discipline = Discipline.BUTTERFLY;
+                    break;
+                case 3:
+                    discipline = Discipline.BREASTSTROKE;
+                    break;
+                case 4:
+                    discipline = Discipline.BACKSTROKE;
+                    break;
+                default:
+                    discipline = null;
+            }
+            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
+        } else {
+            System.out.println("No members for logging");
         }
-        System.out.println("To select a member, insert the corresponding value");
-        int memberSelect = sc.nextInt();
-        sc.nextLine();
-        System.out.println(Subscription.payingMembers.get(memberSelect - 1).getName() + " selected.");
-        System.out.println("Insert time for logging");
-        System.out.println("minutes: ");
-        int minutes = sc.nextInt();
-        sc.nextLine();
-        System.out.println("seconds: ");
-        int seconds = sc.nextInt();
-        sc.nextLine();
-        System.out.println("milliseconds: ");
-        int milliseconds = sc.nextInt();
-        sc.nextLine();
-        System.out.println("Insert discipline");
-        System.out.println("1. crawl");
-        System.out.println("2. butterfly");
-        System.out.println("3. breaststroke");
-        System.out.println("4. backstroke");
-        int selectOption = sc.nextInt();
-        sc.nextLine();
-        switch ((selectOption)) {
-            case 1:
-                discipline = Discipline.CRAWL;
-                break;
-            case 2:
-                discipline = Discipline.BUTTERFLY;
-                break;
-            case 3:
-                discipline = Discipline.BREASTSTROKE;
-                break;
-            case 4:
-                discipline = Discipline.BACKSTROKE;
-                break;
-            default:
-                discipline = null;
-        }
-        analyse.setDailyTopFive(new Performance(Subscription.payingMembers.get(memberSelect - 1).getName(), Subscription.payingMembers.get(memberSelect - 1).getAge(), minutes, seconds, milliseconds), discipline,Subscription.payingMembers.get(memberSelect - 1).getTeam());
     }
 }
-*/
