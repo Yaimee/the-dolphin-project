@@ -1,14 +1,14 @@
-/*
-import Trainer.Performance;
-import Trainer.Discipline;
+package Trainer;
+import Chairman.*;
+import accounting.*;
 import java.util.ArrayList;
 
 public class Analysis {
 
     private ArrayList<Performance> dailyTopFiveJunior = new ArrayList<>();
     private ArrayList<Performance> dailyTopFiveSenior = new ArrayList<>();
-    private ArrayList<Performance> dailyTopFiveCrawlJunior = new ArrayList <>();
-    private ArrayList<Performance> dailyTopFiveCrawlSenior = new ArrayList <>();
+    private ArrayList<Performance> dailyTopFiveCrawlJunior = new ArrayList<>();
+    private ArrayList<Performance> dailyTopFiveCrawlSenior = new ArrayList<>();
     private ArrayList<Performance> dailyTopFiveButterflyJunior = new ArrayList<>();
     private ArrayList<Performance> dailyTopFiveButterflySenior = new ArrayList<>();
     private ArrayList<Performance> dailyTopFiveBreaststrokeJunior = new ArrayList<>();
@@ -16,11 +16,12 @@ public class Analysis {
     private ArrayList<Performance> dailyTopFiveBackstrokeJunior = new ArrayList<>();
     private ArrayList<Performance> dailyTopFiveBackstrokeSenior = new ArrayList<>();
     private ArrayList<Performance> competitionTopFive = new ArrayList<>();
-    int[] checkList = new int[0];
+    private int[] checkList = new int[0];
 
     public ArrayList<Performance> getCompetitionTopFive() {
         return competitionTopFive;
     }
+
     public void setCompetitionTopFive(Performance performance) {
         competitionTopFive.add(performance);
         this.competitionTopFive = calculateTopFive(competitionTopFive);
@@ -62,7 +63,7 @@ public class Analysis {
     }
 
     public void setDailyTopFive(Performance performance, Discipline discipline, Team team) {
-        switch(discipline) {
+        switch (discipline) {
             case CRAWL:
                 if (team == Team.JUNIOR) {
                     dailyTopFiveCrawlJunior.add(performance);
@@ -111,46 +112,55 @@ public class Analysis {
     }
 
     private ArrayList<Performance> calculateTopFive(ArrayList<Performance> topFive) {
-        ArrayList<Performance> performance = new ArrayList<>();
-        ArrayList<Performance> topFive2 = new ArrayList<>();
+        Performance[] buffer = new Performance[topFive.size()];
+        ArrayList<Performance> newTopFive = new ArrayList<>();
 
-        if (topFive.size() > 5) {
-            for (int i = 0; i < 5; i++) {
-                performance.add(topFive.get(i));
-            }
-        } else {
-            for (int i = 0; i < topFive.size(); i++) {
-                performance.add(topFive.get(i));
-            }
+        for (int i = 0; i < topFive.size(); i++) {
+            buffer[i] = topFive.get(i);
         }
-        if(performance.size() > 1) {
-            for (int i = 0; i < topFive.size(); i++) {
+        for (int i = 0; i < buffer.length; i++) {
+            for (int u = i + 1; u < buffer.length; u++) {
+                if (buffer[u].getTime() < buffer[i].getTime()) {
+                    Performance buffer2 = buffer[i];
+                    buffer[i] = buffer[u];
+                    buffer[u] = buffer2;
 
-                for (int u = i + 1; u < topFive.size(); u++) {
-                    if (performance.get(i).getTime() > performance.get(u).getTime()) {
-                        topFive2.add(i, performance.get(u));
-                    }
-                }
-                if (i == performance.size() - 1) {
-                    topFive2.add(performance.get(i));
                 }
             }
-        } else {
-            topFive2.add(performance.get(0));
         }
-        return topFive2;
+        for (int i = 0; i < buffer.length; i++) {
+            newTopFive.add(buffer[i]);
+        }
+        return newTopFive;
     }
 
-    public boolean memberAdded(int ID, ArrayList<Performance> memberList) {
+    //plagieret fra https://www.baeldung.com/java-pad-string
+    public String padRightSpaces(String inputString, int length) {
+        if (inputString.length() >= length) {
+            return inputString;
+        }
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < length - inputString.length()) {
+            sb.append(' ');
+        }
+        sb.append(inputString);
+
+        return String.format("%1$-" + length + "s", inputString);
+    }
+
+    public void printDailyTopFive(Discipline discipline, Team team) {
+        for (int i = 0; i < getDailyTopFive(discipline, team).size(); i++) {
+            System.out.printf((i + 1) + ". " + padRightSpaces(getDailyTopFive(discipline, team).get(i).getName(), 13));
+            System.out.print(getDailyTopFive(discipline, team).get(i).timeFormatted() + "\n");
+        }
+    }
+
+    public int[] getCheckList() {
+        return checkList;
+    }
+
+    public void memberAdded(int ID) {
         checkList = new int[checkList.length + 1];
         checkList[checkList.length - 1] = ID;
-        boolean trueOrFalse = false;
-        for (int i = 0; i < memberList.size(); i++) {
-            if (checkList[i] == ID) {
-                trueOrFalse = true;
-            }
-        }
-        return trueOrFalse;
     }
 }
-*/

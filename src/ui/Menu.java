@@ -62,51 +62,42 @@ class Application{
 
     public void login(int oneTwoOrThree) {
 
+        String username = "";
+        String password = "";
         boolean wrongLogin = true;
 
-        if(oneTwoOrThree == 1) {
             while(wrongLogin) {
                 System.out.print("Username: ");
-                String username = scan.nextLine();
+                String usernameInput = scan.nextLine();
                 System.out.print("Password: ");
-                String password = scan.nextLine();
+                String passwordInput = scan.nextLine();
 
-                if(username.equals("chairman") && password.equals("password1")) {
+                switch (oneTwoOrThree) {
+                    case 1:
+                        username = ch.getUsername();
+                        password = ch.getPassword();
+                        break;
+                    case 2:
+                        username = ac.getUsername();
+                        password = ac.getPassword();
+                        break;
+                    case 3:
+                        //username = tr.getUsername();
+                        //password = tr.getPassword();
+                        break;
+                }
+
+                if(usernameInput.equals(username) && passwordInput.equals(password)) {
                     wrongLogin = false;
-                    chairmanMenu();
+                    switch (oneTwoOrThree) {
+                        case 1 -> chairmanMenu();
+                        case 2 -> accountantMenu();
+                        case 3 -> trainerMenu();
+                    }
                 } else {
                     System.out.println("Invalid input\n");
                 }
             }
-        } else if(oneTwoOrThree == 2) {
-            while(wrongLogin) {
-                System.out.print("Username: ");
-                String username = scan.nextLine();
-                System.out.print("Password: ");
-                String password = scan.nextLine();
-
-                if(username.equals("accountant") && password.equals("password2")) {
-                    wrongLogin = false;
-                    accountantMenu();
-                } else {
-                    System.out.println("Invalid input\n");
-                }
-            }
-        } else if(oneTwoOrThree == 3) {
-            while(wrongLogin) {
-                System.out.print("Username: ");
-                String username = scan.nextLine();
-                System.out.print("Password: ");
-                String password = scan.nextLine();
-
-                if(username.equals("trainer") && password.equals("password3")) {
-                    wrongLogin = false;
-                    trainerMenu();
-                } else {
-                    System.out.println("Invalid input\n");
-                }
-            }
-        }
     }
 
     public void chairmanMenu() {
@@ -114,9 +105,12 @@ class Application{
         displayChairmanMenu();
         int choiceOfOption = chooseFromOptions(2);
 
-        switch (choiceOfOption) {
-            case 1 -> System.out.println("Code for creating new member");
-            case 2 -> run();
+        if (choiceOfOption == 1) {
+            Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);
+            ch.createNewMember(member);
+            ac.initiateCreateSubscription(member);
+        } else if (choiceOfOption == 2) {
+            run();
         }
     }
     public void accountantMenu() {
@@ -146,7 +140,7 @@ class Application{
     }
 
     public void displayChairmanMenu() {
-        System.out.println("Choose from the following Two options");
+        System.out.println("Choose from the following two options");
         System.out.println("Press 1: Create new member");
         System.out.println("Press 2: Log out");
     }
@@ -167,8 +161,7 @@ class Application{
     }
 
     public void run() {
-        DataHandler.getInstance().initMemberJson(); // Init existing members
-        ac.InitiateMembershipSweep();
+        //ac.InitiateMembershipSweep();
 
         System.out.println("\nChoose from the following three privileges");
         System.out.println("Press 1: Chairman");
@@ -184,25 +177,6 @@ class Application{
             case 3 -> login(3);
             case 4 -> System.out.println();
         }
-
-        /*ch.getDataHandler().initMemberJson(); // Init existing members
-
-        Member memberToCreate = new Member(12, "john", "male", "jw@loma.dk", TypeOfSwimmer.COMPETITIVE, Team.JUNIOR);
-        Member memberToCreate1 = new Member(12, "weeb", "male", "lowlw@loma.dk", TypeOfSwimmer.CASUAL, Team.JUNIOR);
-
-
-        ch.createNewMember(memberToCreate);
-        ch.createNewMember(memberToCreate1);
-
-
-        ch.getDataHandler().printMemberList();
-
-        ch.getDataHandler().deleteMember(1);
-
-        ch.getDataHandler().printMemberList();
-
-
-        System.out.println(ch.getDataHandler().findMembersByName("john"));*/
     }
 }
 
