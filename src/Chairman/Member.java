@@ -65,49 +65,4 @@ public class Member {
                 '}';
     }
 
-   /*
-    //--Team--//
-    private Team seniorOrJunior(boolean bool){
-        if(bool)
-            return this.team = Team.JUNIOR;
-        else
-            return this.team = Team.SENIOR;
-    }
-
-    private boolean isSeniorOrJunior(){
-        if(this.team == Team.JUNIOR)
-            return true;
-        else
-            return false;
-    }
-
-    //--TypeOfSwimmer--//
-    private TypeOfSwimmer casualOrCompetitive(boolean bool){
-        if(bool)
-            return this.swimmer = TypeOfSwimmer.CASUAL;
-        else
-            return this.swimmer = TypeOfSwimmer.COMPETITIVE;
-    }
-
-    private boolean isCasualOrComp(){
-        if(this.swimmer == TypeOfSwimmer.CASUAL)
-            return true;
-        else
-            return false;
-    }
-
-    //--Getters--//
-    public int getAge() {
-        return age;
-    }
-
-    public TypeOfSwimmer getSwimmer() {
-        return swimmer;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
- */
 }
