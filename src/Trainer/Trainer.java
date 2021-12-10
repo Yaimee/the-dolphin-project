@@ -8,6 +8,7 @@ public class Trainer {
     Analysis analyse = new Analysis();
     Scanner sc = new Scanner(System.in);
     ArrayList<Competition> competitions = new ArrayList<>();
+    DataHandler dh = DataHandler.getInstance();
     String username;
     String password;
     /*
@@ -118,16 +119,17 @@ public class Trainer {
     }
 
     public void logDailyPerformance() {
-        if (!Subscription.payingMembers.isEmpty()) {
+        dh.initMemberJson();
+        if (!dh.getMemberList().isEmpty()) {
             Discipline discipline;
             System.out.println("Members available for logging: ");
-            for (int i = 0; i < Subscription.payingMembers.size(); i++) {
-                System.out.println((i + 1) + ". " + Subscription.payingMembers.get(i).getName());
+            for (int i = 0; i < dh.getMemberList().size(); i++) {
+                System.out.println((i + 1) + ". " + dh.getMemberList().get(i).getName());
             }
             System.out.println("To select a member, insert the corresponding value");
             int memberSelect = sc.nextInt();
             sc.nextLine();
-            System.out.println(Subscription.payingMembers.get(memberSelect - 1).getName() + " selected.");
+            System.out.println(dh.getMemberList().get(memberSelect - 1).getName() + " selected.");
             System.out.println("Insert time for logging");
             System.out.println("minutes: ");
             int minutes = sc.nextInt();
@@ -161,7 +163,7 @@ public class Trainer {
                 default:
                     discipline = null;
             }
-            analyse.setDailyTopFive(new Performance(Subscription.payingMembers.get(memberSelect - 1).getName(), Subscription.payingMembers.get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, Subscription.payingMembers.get(memberSelect - 1).getID()),discipline, Subscription.payingMembers.get(memberSelect - 1).getTeam());
+            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
         } else {
             System.out.println("No members for logging");
         }

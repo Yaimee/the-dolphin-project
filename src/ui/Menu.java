@@ -154,11 +154,12 @@ class Application{
         System.out.println("Press 5: Log out");
     }
     public void displayTrainerMenu() {
-        System.out.println("Choose from the following four options");
-        System.out.println("Press 1: ?");
-        System.out.println("Press 2: ?");
-        System.out.println("Press 3: ?");
-        System.out.println("Press 4: Log out");
+        System.out.println("Choose from the following five options");
+        System.out.println("Press 1: Create competition");
+        System.out.println("Press 2: Competition list");
+        System.out.println("Press 3: Log daily performance");
+        System.out.println("Press 4: See daily top five");
+        System.out.println("Press 5: Log out");
     }
 
     public void run() {
