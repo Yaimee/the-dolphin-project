@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 
 public class Chairman {
-    private String username;
-    private String password;
+    private final String username = "";
+    private final String password = "";
     private final Scanner sc = new Scanner(System.in);
     private final DataHandler dh = DataHandler.getInstance();
 
@@ -73,5 +73,13 @@ public class Chairman {
             return Team.JUNIOR;
         else
             return Team.SENIOR;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

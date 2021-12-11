@@ -1,0 +1,19 @@
+<changelist name="Uncommitted_changes_before_Update_at_11_12_2021,_17_34_[Changes]" date="1639240484303" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2021,_17_34_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 11/12/2021, 17.34 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2021,_17_34_[Changes]/Chairman.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2021,_17_34_[Changes]/TestMain.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11_12_2021,_17_34_[Changes]/DataHandler.class" />
+  </binary>
+</changelist>

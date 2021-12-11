@@ -17,12 +17,11 @@ public class DataHandler {
     //Singleton instance
     private static DataHandler single_instance = null;
     // Filepath
-    private String filePath = "";
+    private String filePath = "members/payingMembers.json";
     // List of paying members
     private final ArrayList<Member> memberList = new ArrayList<Member>();
-    private ArrayList<Competition> competitions = new ArrayList<>();
-    // List of non paying members
-    //private final ArrayList<Member> nonPayingMemberList = new ArrayList<Member>();
+    // List of non-paying members
+    private final ArrayList<Member> nonPayingMemberList = new ArrayList<>();
     //  Du bliver nødt til at adde en ny arraylist, også lave metoder tilhørende den arraylist for at kunne tilføje/slette
     // Json writer object
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -39,8 +38,9 @@ public class DataHandler {
         }
     }
 
-    public void writeCompetitions() {
-        String toJson = gson.toJson(competitions);
+    public void writeMembersToSub() {
+
+        String toJson = gson.toJson(nonPayingMemberList);
         try {
             FileWriter file = new FileWriter(this.filePath);
             file.write(toJson);
@@ -50,9 +50,9 @@ public class DataHandler {
         }
     }
 
-    public void addToCompetitionsList(ArrayList<Competition> competitionsToAdd) {
-        competitions = competitionsToAdd;
-        writeCompetitions();
+    public void addMemberToNonPayingList(Member member) {
+        nonPayingMemberList.add(member);
+        //deleteMember(member.getID());
     }
 
     public void addMemberToList(Member memberToAdd){
@@ -60,9 +60,9 @@ public class DataHandler {
     }
 
     public void deleteMember(int id){
-        for (Member member : memberList) {
-            if(member.getID() == id){
-                memberList.remove(member);
+        for (int i = 0; i < memberList.size(); i++) {
+            if(memberList.get(i).getID() == id){
+                memberList.remove(i);
                 writeMembers();
                 break;
             }
@@ -73,18 +73,6 @@ public class DataHandler {
         System.out.println(memberList);
     }
 
-    public void initCompetitionsJson() {
-        try {
-            Reader reader = null;
-            try {
-                reader = Files.newBufferedReader(Paths.get("Competitions/Compitions.json"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (NullPointerException e) {
-            System.out.println("No competitions found");
-        }
-    }
     public void initMemberJson(){
         if (memberList != null && memberList.size() > 0)
             return;
@@ -98,7 +86,6 @@ public class DataHandler {
             }
 
             Member[] fromJson = gson.fromJson(reader, Member[].class);
-
             memberList.addAll(Arrays.asList(fromJson));
 
         } catch (NullPointerException e) {
