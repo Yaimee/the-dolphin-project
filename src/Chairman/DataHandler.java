@@ -60,7 +60,7 @@ public class DataHandler {
         try {
             Reader reader = null;
             try {
-                reader = Files.newBufferedReader(Paths.get("members/members.json"));
+                reader = Files.newBufferedReader(Paths.get("members/payingMembers.json"));
 
             } catch (IOException e) {
                 e.printStackTrace();
