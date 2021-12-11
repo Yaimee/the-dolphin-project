@@ -40,7 +40,7 @@ public class DataHandler {
             e.printStackTrace();
         }
     }
-
+    // Metode til at skrive alt hvad der er på ArrayListen ind på .json filen
     public void writeCompetitions() {
         String toJson = gson.toJson(competitions);
         try {
@@ -67,13 +67,11 @@ public class DataHandler {
 
     public void addMemberToNonPayingList(Member member) {
         nonPayingMemberList.add(member);
-        //deleteMember(member.getID());
     }
 
-
-    public void addToCompetitionsList(ArrayList<Competition> competitionsToAdd) {
-        competitions = competitionsToAdd;
-        writeCompetitions();
+    // Metode til at tilføje Competitions til ArrayListen
+    public void addToCompetitionsList(Competition competitionToAdd) {
+        competitions.add(competitionToAdd);
     }
     public void addMemberToList(Member memberToAdd){
         memberList.add(memberToAdd);
@@ -105,14 +103,19 @@ public class DataHandler {
         System.out.println(memberList);
     }
 
+    // Metode til at reade alt hvad der er på .json ned på ArrayListen(Den her køres som det første)
     public void initCompetitionsJson() {
         try {
             Reader reader = null;
             try {
-                reader = Files.newBufferedReader(Paths.get("Competitions/Compitions.json"));
+                reader = Files.newBufferedReader(Paths.get("Competitions/Competitions.json"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Competition[] fromJson = gson.fromJson(reader, Competition[].class);
+            competitions.addAll(Arrays.asList(fromJson));
+
         } catch (NullPointerException e) {
             System.out.println("No competitions found");
         }
