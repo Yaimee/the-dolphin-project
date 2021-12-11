@@ -124,6 +124,7 @@ class Application{
         switch (choiceOfOption) {
             case 1:
                 ac.InitiateAddMemberToNonPayingList();
+                break;
             case 2:
                 ac.InitiateChangeMembershipToPassive();
                 break;
