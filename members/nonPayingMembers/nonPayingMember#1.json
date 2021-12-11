@@ -1,0 +1,11 @@
+[
+  {
+    "ID": 1,
+    "age": 20,
+    "name": "Anna",
+    "gender": "Female",
+    "email": "anna@gmail.com",
+    "swimmer": "COMPETITIVE",
+    "team": "SENIOR"
+  }
+]
