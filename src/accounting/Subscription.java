@@ -4,15 +4,21 @@ import Chairman.Chairman;
 import Chairman.DataHandler;
 import Chairman.Member;
 import Chairman.TypeOfSwimmer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Scanner;
-
 public class Subscription {
 
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private Chairman ch = new Chairman();
 
     static int numberOfJuniorCasual = 0;
@@ -22,9 +28,44 @@ public class Subscription {
     static int numberOfSeniorRetired = 0;
     static int numberOfPassiveMemberships = 0;
 
+    private ArrayList<Integer> numberOfSubscriptions = new ArrayList<>();
 
     public void createSubscription(Member member) {
+        initiateNumberOfSubscriptions();
         getTypeOfSubscription(member);
+        writeMembersSub();
+    }
+
+    public void writeMembersSub() {
+
+        String toJson = gson.toJson(numberOfSubscriptions);
+        try {
+            FileWriter file = new FileWriter("members/numberOfSubscriptionsCounter.json");
+            file.write(toJson);
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void initiateNumberOfSubscriptions(){
+        try {
+            Reader readerSub = null;
+            try {
+                readerSub = Files.newBufferedReader(Paths.get("members/numberOfSubscriptionsCounter.json"));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Integer[] mJson = gson.fromJson(readerSub, Integer[].class);
+            numberOfSubscriptions.addAll(Arrays.asList(mJson));
+
+        } catch (NullPointerException e) {
+            System.out.println("Nothing is right");
+        }
+
     }
 
     public int lengthOfNonPayingMembersDirectory() {
@@ -47,14 +88,13 @@ public class Subscription {
         }
     }
 
-    public void addMemberToList(Member member) {
+    public void addMemberToList(int membershipId) {
         int nonPayingMemberId = generateId();
-        //DataHandler dh = new DataHandler("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
         DataHandler dh = DataHandler.getInstance();
         dh.setFilePath("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
-        dh.addMemberToList(member);
+        dh.addMemberToList(dh.findMemberByID(membershipId));
         dh.writeMembers();
-        //dh.deleteMember(member.getID());
+        dh.deleteMember(membershipId);
     }
 
     public int generateId() {
@@ -119,19 +159,19 @@ public class Subscription {
 
         if (age < 18 || age >= 60) {
             if (age >= 60) {
-                numberOfSeniorRetired ++;
+                numberOfSubscriptions.set(4, (numberOfSubscriptions.get(4) + 1));
                 return 1200;
             } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                numberOfJuniorCasual ++;
+                numberOfSubscriptions.set(0, (numberOfSubscriptions.get(0) + 1));
             } else {
-                numberOfJuniorCompetitor ++;
+                numberOfSubscriptions.set(2, (numberOfSubscriptions.get(2) + 1));
             }
             return 1000;
         } else {
             if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                numberOfSeniorCasual ++;
+                numberOfSubscriptions.set(1, (numberOfSubscriptions.get(1) + 1));
             } else {
-                numberOfSeniorCompetitor ++;
+                numberOfSubscriptions.set(3, (numberOfSubscriptions.get(3) + 1));
             }
             return 1600;
         }

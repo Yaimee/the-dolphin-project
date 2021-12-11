@@ -106,7 +106,8 @@ class Application{
         int choiceOfOption = chooseFromOptions(2);
 
         if (choiceOfOption == 1) {
-            Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);
+            //Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);
+            Member member = new Member(15, "Sarah", "female", "john@gmail.com", TypeOfSwimmer.CASUAL, Team.JUNIOR);
             ch.createNewMember(member);
             ac.initiateCreateSubscription(member);
         } else if (choiceOfOption == 2) {
@@ -118,12 +119,24 @@ class Application{
         displayAccountantMenu();
         int choiceOfOption = chooseFromOptions(5);
 
+        //System.out.println("Code for changing subscription of member to passive");
         switch (choiceOfOption) {
-            case 1 -> System.out.println("Code for adding member to non-paying list");
-            case 2 -> System.out.println("Code for adding member to paying list");
-            case 3 -> ac.InitiateChangeMembershipToPassive(); //System.out.println("Code for changing subscription of member to passive");
-            case 4 -> ac.initiateGetProjectedYearlyRevenue();
-            case 5 -> run();
+            case 1:
+                ac.InitiateAddMemberToList();
+
+                break;
+            case 2:
+                System.out.println("Code for adding member to paying list");
+                break;
+            case 3:
+                ac.InitiateChangeMembershipToPassive();
+                break;
+            case 4:
+                ac.initiateGetProjectedYearlyRevenue();
+                break;
+            case 5:
+                run();
+                break;
         }
     }
     public void trainerMenu() {
