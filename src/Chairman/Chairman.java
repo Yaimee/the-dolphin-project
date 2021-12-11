@@ -74,4 +74,12 @@ public class Chairman {
         else
             return Team.SENIOR;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
