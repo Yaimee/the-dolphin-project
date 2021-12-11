@@ -96,6 +96,10 @@ public class Trainer {
         return analyse;
     }
 
+    public void addCompetitionList(Member member) {
+
+    }
+
     public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
         System.out.println("Would you like to add all competitors from the top five list now? (y/n)");
         System.out.println("To pick them one by one, add them later.");

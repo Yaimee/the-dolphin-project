@@ -2,6 +2,7 @@ package Chairman;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import Trainer.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class DataHandler {
     private String filePath = "";
     // List of paying members
     private final ArrayList<Member> memberList = new ArrayList<Member>();
+    private ArrayList<Competition> competitions = new ArrayList<>();
     // List of non paying members
     //private final ArrayList<Member> nonPayingMemberList = new ArrayList<Member>();
     //  Du bliver nødt til at adde en ny arraylist, også lave metoder tilhørende den arraylist for at kunne tilføje/slette
@@ -35,7 +37,22 @@ public class DataHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public void writeCompetitions() {
+        String toJson = gson.toJson(competitions);
+        try {
+            FileWriter file = new FileWriter(this.filePath);
+            file.write(toJson);
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addToCompetitionsList(ArrayList<Competition> competitionsToAdd) {
+        competitions = competitionsToAdd;
+        writeCompetitions();
     }
 
     public void addMemberToList(Member memberToAdd){
@@ -56,17 +73,32 @@ public class DataHandler {
         System.out.println(memberList);
     }
 
-    public void initMemberJson(){
+    public void initCompetitionsJson() {
         try {
             Reader reader = null;
             try {
-                reader = Files.newBufferedReader(Paths.get("members/members.json"));
+                reader = Files.newBufferedReader(Paths.get("Competitions/Compitions.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (NullPointerException e) {
+            System.out.println("No competitions found");
+        }
+    }
+    public void initMemberJson(){
+        if (memberList != null && memberList.size() > 0)
+            return;
+        try {
+            Reader reader = null;
+            try {
+                reader = Files.newBufferedReader(Paths.get("members/payingMembers.json"));
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             Member[] fromJson = gson.fromJson(reader, Member[].class);
+
             memberList.addAll(Arrays.asList(fromJson));
 
         } catch (NullPointerException e) {
