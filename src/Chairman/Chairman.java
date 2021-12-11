@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Scanner;
+
 
 public class Chairman {
     private String username;
     private String password;
-    //private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final Scanner sc = new Scanner(System.in);
     private final DataHandler dh = DataHandler.getInstance();
 
     public void createNewMember(Member member){
@@ -29,17 +31,47 @@ public class Chairman {
             e.printStackTrace();
         }
 
-        dh.setFilePath("members/members.json");
+        dh.setFilePath("members/payingMembers.json");
         dh.addMemberToList(member);
         dh.writeMembers();
         System.out.println("Added member: " + member.getName());
     }
 
-    public String getUsername() {
-        return this.username;
+    public Member initMemberCreation(){
+        System.out.println("Age: ");
+        int age = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Name: ");
+        String name = sc.nextLine();
+        System.out.println("Gender: ");
+        String gender = sc.nextLine();
+        System.out.println("Email: ");
+        String email = sc.nextLine();
+
+        return new Member(age,name,gender,email,swimmerChooser(),teamChooser(age));
     }
 
-    public String getPassword() {
-        return this.password;
+    private TypeOfSwimmer swimmerChooser(){
+        System.out.println("What type of swimmer is it?\n" +
+                "1.\tCasual\n" +
+                "2.\tCompetitive");
+        do {
+            String input = sc.nextLine();
+
+            if (input.matches("1"))
+                return TypeOfSwimmer.CASUAL;
+            else if(input.matches("2"))
+                return TypeOfSwimmer.COMPETITIVE;
+            else
+                System.out.println("Invalid input");
+
+        }while(true);
+    }
+
+    private Team teamChooser(int age){
+        if(age < 18)
+            return Team.JUNIOR;
+        else
+            return Team.SENIOR;
     }
 }

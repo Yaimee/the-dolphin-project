@@ -73,8 +73,8 @@ class  Application{
                 String passwordInput = scan.nextLine();
                 switch (oneTwoOrThree) {
                     case 1:
-                        username = ch.getUsername();
-                        password = ch.getPassword();
+                        //username = ch.getUsername();
+                        //password = ch.getPassword();
                         break;
                     case 2:
                         username = ac.getUsername();
@@ -103,9 +103,10 @@ class  Application{
         System.out.println("\nThis is the Chairman's menu");
         displayChairmanMenu();
         int choiceOfOption = chooseFromOptions(2);
+        //-------------------XD--------------------//
 
         if (choiceOfOption == 1) {
-            Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);
+            Member member = ch.initMemberCreation();
             ch.createNewMember(member);
             ac.initiateCreateSubscription(member);
         } else if (choiceOfOption == 2) {
@@ -128,6 +129,7 @@ class  Application{
 
 
     public void trainerMenu() {
+        DataHandler dh = DataHandler.getInstance();
         do {
             System.out.println("\nThis is the Trainer's menu");
             displayTrainerMenu();
@@ -140,6 +142,7 @@ class  Application{
                 case 4 -> displayDailyTopFiveMenu();
                 case 5 -> {
                     run = false;
+                    dh.addToCompetitionsList(tr.getCompetitions());
                     run();
                 }
             }
@@ -320,7 +323,6 @@ class  Application{
         } else if (selectOption == 2) {
             team = Team.SENIOR;
         }
-
         return team;
     }
 
@@ -328,6 +330,8 @@ class  Application{
 
     public void run() {
         //ac.InitiateMembershipSweep();
+        DataHandler dh = DataHandler.getInstance();
+        dh.initMemberJson();
 
         System.out.println("\nChoose from the following three privileges");
         System.out.println("Press 1: Chairman");

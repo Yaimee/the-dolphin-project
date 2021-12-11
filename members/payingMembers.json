@@ -1,0 +1,38 @@
+[
+  {
+    "ID": 7,
+    "age": 20,
+    "name": "Lars",
+    "gender": "Male",
+    "email": "bingolars@hotmail.com",
+    "swimmer": "CASUAL",
+    "team": "SENIOR"
+  },
+  {
+    "ID": 8,
+    "age": 17,
+    "name": "Mads",
+    "gender": "Male",
+    "email": "bingomads@hotmail.com",
+    "swimmer": "COMPETITIVE",
+    "team": "JUNIOR"
+  },
+  {
+    "ID": 9,
+    "age": 21,
+    "name": "Lars-Allan",
+    "gender": "Female",
+    "email": "bingoLars@hotmail.com",
+    "swimmer": "COMPETITIVE",
+    "team": "SENIOR"
+  },
+  {
+    "ID": 10,
+    "age": 24,
+    "name": "r",
+    "gender": "male",
+    "email": "ras@fd.dk",
+    "swimmer": "COMPETITIVE",
+    "team": "SENIOR"
+  }
+]
