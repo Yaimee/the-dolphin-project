@@ -1,0 +1,109 @@
+<changelist name="Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]" date="1639261564732" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 11-12-2021 23:26 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Discipline.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Discipline.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Discipline.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TypeOfSwimmer.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/TypeOfSwimmer.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Subscription.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Subscription.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/DataHandler.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Menu.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Chairman.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Chairman.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Menu.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Menu1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Analysis$1.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Analysis$1.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Analysis$1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Analysis.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Analysis.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Analysis.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Competition.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Competition.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Competition.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Application.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Application.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TestMain.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/TestMain.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/DataHandler.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/DataHandler1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Trainer.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Trainer.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Trainer.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Team.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Team.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/TypeOfSwimmer1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Member.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Member.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Team1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Application1.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Trainer/Performance.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Trainer/Performance.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Performance.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value=".idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Accountant.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_11-12-2021_23_26_[Changes]/Accountant.class" />
+  </binary>
+</changelist>
