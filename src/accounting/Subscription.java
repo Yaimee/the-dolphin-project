@@ -68,7 +68,7 @@ public class Subscription {
 
     public int lengthOfNonPayingMembersDirectory() {
         File directory = new File("members/nonPayingMembers/");
-        return directory.list().length;
+        return directory.list()==null?0:directory.list().length;
     }
 
     public void membershipSweep() {
