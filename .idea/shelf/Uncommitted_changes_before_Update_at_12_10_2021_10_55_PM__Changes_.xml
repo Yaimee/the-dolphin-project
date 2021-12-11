@@ -1,0 +1,54 @@
+<changelist name="Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]" date="1639173325182" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 12/10/2021 10:55 PM [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Member.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Member.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Member.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TypeOfSwimmer.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Team.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Application.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/DataHandler.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Menu.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Chairman.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/Subscription.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/Subscription.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Subscription.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/Accountant.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/Accountant.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Accountant.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
+    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TestMain.class" />
+  </binary>
+</changelist>
