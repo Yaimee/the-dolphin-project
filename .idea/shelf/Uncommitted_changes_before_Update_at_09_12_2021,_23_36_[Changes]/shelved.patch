@@ -1,0 +1,143 @@
+Index: src/accounting/Subscription.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package accounting;\n\nimport Chairman.Chairman;\nimport Chairman.DataHandler;\nimport Chairman.Member;\nimport Chairman.TypeOfSwimmer;\n\nimport java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.ArrayList;\nimport java.util.Date;\nimport java.util.Scanner;\n\npublic class Subscription {\n\n    private Chairman ch = new Chairman();\n\n    static int numberOfJuniorCasual = 0;\n    static int numberOfSeniorCasual = 0;\n    static int numberOfJuniorCompetitor = 0;\n    static int numberOfSeniorCompetitor = 0;\n    static int numberOfSeniorRetired = 0;\n    static int numberOfPassiveMemberships = 0;\n\n\n    public void createSubscription(Member member) {\n        getTypeOfSubscription(member);\n    }\n\n    public int lengthOfNonPayingMembersDirectory() {\n        File directory = new File(\"members/nonPayingMembers/\");\n        return directory.list().length;\n    }\n\n    public void membershipSweep(){\n        int length = lengthOfNonPayingMembersDirectory(); //referring to the length of the nonPayingMembers directory\n        for (int i = 1; i <= length; i++) {\n            File file = new File(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + i + \".json\");\n            if(file.exists()) {\n                //inspired by https://stackoverflow.com/questions/15042855/delete-files-older-than-x-days\n                int maximumDifference = 28;\n                long difference = new Date().getTime() - file.lastModified();\n                if (difference > (long) maximumDifference * 24 * 60 * 60 * 1000) {\n                    file.delete();\n                }\n            }\n        }\n    }\n\n    public void addMemberToList(Member member) {\n        int nonPayingMemberId = generateId();\n        DataHandler dh = new DataHandler(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + nonPayingMemberId + \".json\");\n        dh.addMemberToList(member);\n        dh.writeMembers();\n        //dh.deleteMember(member.getID());\n    }\n\n    public int generateId() {\n        int numberOfFiles = lengthOfNonPayingMembersDirectory();\n        for (int i = 1; i <= numberOfFiles; i++) {\n            File file = new File(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + i + \".json\");\n            if(!file.exists()) {\n                return i;\n            }\n        }\n        return numberOfFiles + 1;\n    }\n\n    //added code for clarity - should be deleted upon completion\n    public void changeMembershipToPassive(int membershipId) {\n        ch.getDataHandler().initMemberJson(); // Init existing members\n        //ch.getDataHandler().printMemberList();\n        Member member = ch.getDataHandler().findMemberByID(membershipId);\n        int age = member.getAge();\n        TypeOfSwimmer swimmer = member.getSwimmer();\n\n        System.out.println(\"hallooooo\");\n\n        if (age < 18 || age >= 60) {\n            if (age >= 60) {\n                System.out.println(numberOfPassiveMemberships);\n                numberOfSeniorRetired --;\n                System.out.println(numberOfPassiveMemberships);\n            } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\n                System.out.println(numberOfJuniorCasual);\n                numberOfJuniorCasual --;\n                System.out.println(numberOfJuniorCasual);\n            } else {\n                System.out.println(numberOfJuniorCompetitor);\n                numberOfJuniorCompetitor --;\n                System.out.println(numberOfJuniorCompetitor);\n            }\n        } else {\n            if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\n                System.out.println(numberOfSeniorCasual);\n                numberOfSeniorCasual --;\n                System.out.println(numberOfSeniorCasual);\n            } else {\n                System.out.println(numberOfSeniorCompetitor);\n                numberOfSeniorCompetitor --;\n                System.out.println(numberOfSeniorCompetitor);\n            }\n        }\n        System.out.println(numberOfPassiveMemberships);\n        numberOfPassiveMemberships ++;\n        System.out.println(numberOfPassiveMemberships);\n    }\n\n    public int getProjectedYearlyRevenue() {\n        int revenue = 0;\n        revenue += 1000 * (numberOfJuniorCasual + numberOfJuniorCompetitor);\n        revenue += 1600 * (numberOfSeniorCasual + numberOfSeniorCompetitor);\n        revenue += 1200 * numberOfSeniorRetired;\n        revenue += 500 * numberOfPassiveMemberships;\n        return revenue;\n    }\n\n    public int getTypeOfSubscription(Member member) {\n        int age = member.getAge();\n        TypeOfSwimmer swimmer = member.getSwimmer();\n\n        if (age < 18 || age >= 60) {\n            if (age >= 60) {\n                numberOfSeniorRetired ++;\n                return 1200;\n            } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\n                numberOfJuniorCasual ++;\n            } else {\n                numberOfJuniorCompetitor ++;\n            }\n            return 1000;\n        } else {\n            if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\n                numberOfSeniorCasual ++;\n            } else {\n                numberOfSeniorCompetitor ++;\n            }\n            return 1600;\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/accounting/Subscription.java b/src/accounting/Subscription.java
+--- a/src/accounting/Subscription.java	(revision 15fde1fb2bfa4911d2b9b1e56da7b271cb2231b7)
++++ b/src/accounting/Subscription.java	(date 1638973883285)
+@@ -7,7 +7,12 @@
+ 
+ import java.io.File;
+ import java.io.FileNotFoundException;
++import java.io.IOException;
++import java.io.Reader;
++import java.nio.file.Files;
++import java.nio.file.Paths;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Date;
+ import java.util.Scanner;
+ 
+@@ -66,16 +71,35 @@
+         return numberOfFiles + 1;
+     }
+ 
++    public void initSubscriptionCountJson(){
++        try {
++            Reader reader = null;
++            try {
++                reader = Files.newBufferedReader(Paths.get("members/subscriptionCount.json"));
++
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++
++            //where I left off
++            Member[] fromJson = gson.fromJson(reader, Member[].class);
++            memberList.addAll(Arrays.asList(fromJson));
++
++        } catch (NullPointerException e) {
++            System.out.println("No existing users found");
++        }
++
++    }
++
++
+     //added code for clarity - should be deleted upon completion
+     public void changeMembershipToPassive(int membershipId) {
+         ch.getDataHandler().initMemberJson(); // Init existing members
+-        //ch.getDataHandler().printMemberList();
++        //ch.getDataHandler().printMemberList(); // print list
+         Member member = ch.getDataHandler().findMemberByID(membershipId);
+         int age = member.getAge();
+         TypeOfSwimmer swimmer = member.getSwimmer();
+ 
+-        System.out.println("hallooooo");
+-
+         if (age < 18 || age >= 60) {
+             if (age >= 60) {
+                 System.out.println(numberOfPassiveMemberships);
+Index: members/nonPayingMembers.json
+===================================================================
+diff --git a/members/nonPayingMembers.json b/members/nonPayingMembers.json
+deleted file mode 100644
+--- a/members/nonPayingMembers.json	(revision 15fde1fb2bfa4911d2b9b1e56da7b271cb2231b7)
++++ /dev/null	(revision 15fde1fb2bfa4911d2b9b1e56da7b271cb2231b7)
+@@ -1,11 +0,0 @@
+-[
+-  {
+-    "ID": 3,
+-    "age": 12,
+-    "name": "weeb",
+-    "gender": "male",
+-    "email": "lowlw@loma.dk",
+-    "swimmer": "CASUAL",
+-    "team": "JUNIOR"
+-  }
+-]
+\ No newline at end of file
+Index: src/accounting/TestMain.java
+===================================================================
+diff --git a/src/accounting/TestMain.java b/src/accounting/TestMain.java
+deleted file mode 100644
+--- a/src/accounting/TestMain.java	(revision 15fde1fb2bfa4911d2b9b1e56da7b271cb2231b7)
++++ /dev/null	(revision 15fde1fb2bfa4911d2b9b1e56da7b271cb2231b7)
+@@ -1,55 +0,0 @@
+-package accounting;
+-
+-import Chairman.Chairman;
+-import Chairman.Member;
+-import Chairman.Team;
+-import Chairman.TypeOfSwimmer;
+-
+-import java.util.ArrayList;
+-
+-public class TestMain {
+-
+-    public void run() {
+-
+-        Chairman ch = new Chairman();
+-        Accountant ac = new Accountant();
+-
+-        ch.getDataHandler().initMemberJson(); // Init existing members
+-
+-        //ac.InitiateMembershipSweep();
+-
+-        Member nonPayingMember = ch.getDataHandler().findMemberByID(3);
+-
+-        ac.InitiateAddMemberToList(nonPayingMember);
+-
+-
+-        /*Member memberToCreate = new Member(100, "john", "male", "jw@loma.dk", TypeOfSwimmer.COMPETITIVE, Team.JUNIOR);
+-        ac.initiateCreateSubscription(memberToCreate);*/
+-
+-        /*
+-        Member memberToCreate1 = new Member(18, "weeb", "male", "lowlw@loma.dk", TypeOfSwimmer.CASUAL, Team.JUNIOR);
+-        ac.initiateCreateSubscription(memberToCreate1);
+-
+-        ac.initiateGetProjectedYearlyRevenue();
+-        */
+-
+-        /*ch.createNewMember(memberToCreate);
+-        ch.createNewMember(memberToCreate1);
+-
+-
+-        ch.getDataHandler().printMemberList();
+-
+-        ch.getDataHandler().deleteMember(1);
+-
+-        ch.getDataHandler().printMemberList();
+-
+-
+-        System.out.println(ch.getDataHandler().findMembersByName("john"));*/
+-
+-    }
+-
+-    public static void main(String[] args) {
+-        new TestMain().run();
+-
+-    }
+-}

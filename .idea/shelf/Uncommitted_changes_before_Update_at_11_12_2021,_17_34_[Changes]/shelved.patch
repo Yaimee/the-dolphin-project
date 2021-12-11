@@ -1,0 +1,84 @@
+Index: src/Chairman/Chairman.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Chairman;\nimport com.google.gson.*;\n\nimport java.io.IOException;\nimport java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Chairman {\n    private String username;\n    private String password;\n    //private final Gson gson = new GsonBuilder().setPrettyPrinting().create();\n    private final DataHandler dh = DataHandler.getInstance();\n\n    public void createNewMember(Member member){\n        String text = \"\";\n        int id;\n\n        try {\n            text = Files.readString(Path.of(\"members/idCounter.txt\"));\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n        id = Integer.parseInt(text);\n        member.setID(id);\n        try {\n            Files.writeString(Path.of(\"members/idCounter.txt\"),\"\" + (id+1), StandardOpenOption.WRITE);\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n\n        dh.setFilePath(\"members/members.json\");\n        dh.addMemberToList(member);\n        dh.writeMembers();\n        System.out.println(\"Added member: \" + member.getName());\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Chairman/Chairman.java b/src/Chairman/Chairman.java
+--- a/src/Chairman/Chairman.java	(revision 4424f19274d6a2dd62e1c87c751a532ff90671fb)
++++ b/src/Chairman/Chairman.java	(date 1639173574155)
+@@ -7,8 +7,8 @@
+ import java.nio.file.StandardOpenOption;
+ 
+ public class Chairman {
+-    private String username;
+-    private String password;
++    private String username = "";
++    private String password = "";
+     //private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+     private final DataHandler dh = DataHandler.getInstance();
+ 
+@@ -35,4 +35,11 @@
+         System.out.println("Added member: " + member.getName());
+     }
+ 
++    public String getUsername() {
++        return username;
++    }
++
++    public String getPassword() {
++        return password;
++    }
+ }
+Index: members/members.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[\n  {\n    \"ID\": 0,\n    \"age\": 12,\n    \"name\": \"john\",\n    \"gender\": \"male\",\n    \"email\": \"jw@loma.dk\",\n    \"swimmer\": \"COMPETITIVE\",\n    \"team\": \"JUNIOR\"\n  },\n  {\n    \"ID\": 2,\n    \"age\": 12,\n    \"name\": \"john\",\n    \"gender\": \"male\",\n    \"email\": \"jw@loma.dk\",\n    \"swimmer\": \"COMPETITIVE\",\n    \"team\": \"JUNIOR\"\n  },\n  {\n    \"ID\": 3,\n    \"age\": 12,\n    \"name\": \"weeb\",\n    \"gender\": \"male\",\n    \"email\": \"lowlw@loma.dk\",\n    \"swimmer\": \"CASUAL\",\n    \"team\": \"JUNIOR\"\n  },\n  {\n    \"ID\": 4,\n    \"age\": 12,\n    \"name\": \"john\",\n    \"gender\": \"male\",\n    \"email\": \"jw@loma.dk\",\n    \"swimmer\": \"COMPETITIVE\",\n    \"team\": \"JUNIOR\"\n  }\n]
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/members/members.json b/members/members.json
+--- a/members/members.json	(revision 4424f19274d6a2dd62e1c87c751a532ff90671fb)
++++ b/members/members.json	(date 1639239577224)
+@@ -1,38 +1,3 @@
+ [
+-  {
+-    "ID": 0,
+-    "age": 12,
+-    "name": "john",
+-    "gender": "male",
+-    "email": "jw@loma.dk",
+-    "swimmer": "COMPETITIVE",
+-    "team": "JUNIOR"
+-  },
+-  {
+-    "ID": 2,
+-    "age": 12,
+-    "name": "john",
+-    "gender": "male",
+-    "email": "jw@loma.dk",
+-    "swimmer": "COMPETITIVE",
+-    "team": "JUNIOR"
+-  },
+-  {
+-    "ID": 3,
+-    "age": 12,
+-    "name": "weeb",
+-    "gender": "male",
+-    "email": "lowlw@loma.dk",
+-    "swimmer": "CASUAL",
+-    "team": "JUNIOR"
+-  },
+-  {
+-    "ID": 4,
+-    "age": 12,
+-    "name": "john",
+-    "gender": "male",
+-    "email": "jw@loma.dk",
+-    "swimmer": "COMPETITIVE",
+-    "team": "JUNIOR"
+-  }
++
+ ]
+\ No newline at end of file
