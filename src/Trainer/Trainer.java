@@ -8,6 +8,7 @@ public class Trainer {
     private Analysis analyse = new Analysis();
     private Scanner sc = new Scanner(System.in);
     private ArrayList<Competition> competitions = new ArrayList<>();
+    private int[] checkList = new int[0];
     private DataHandler dh = DataHandler.getInstance();
     private final String username = "gucci";
     private final String password = "prada";
@@ -138,6 +139,10 @@ public class Trainer {
     }
 
     public void logDailyPerformance() {
+
+        int checkListMatch;
+        boolean memberAdded = false;
+
         dh.initMemberJson();
         if (!dh.getMemberList().isEmpty()) {
             Discipline discipline;
@@ -182,10 +187,28 @@ public class Trainer {
                 default:
                     discipline = null;
             }
-            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
+            checkListMatch = dh.getMemberList().get(memberSelect - 1).getID();
+            memberAddedToDailyPerformance(checkListMatch);
+            for (int i = 0; i < analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).size(); i++) {
+                for(int u = 0; u < checkList.length; u++) {
+                    if (checkList[u] == analyse.getDailyTopFive(discipline, dh.getMemberList().get(memberSelect - 1).getTeam()).get(i).getID()) {
+                        memberAdded = true;
+                        analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).remove(i);
+                        analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).add(i, new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()));
+                    }
+                }
+            }
+            if(!memberAdded) {
+                analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()), discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
+            }
         } else {
             System.out.println("No members for logging");
         }
+    }
+
+    public void memberAddedToDailyPerformance(int ID) {
+        checkList = new int[checkList.length + 1];
+        checkList[checkList.length - 1] = ID;
     }
 
     public String getUsername() {
