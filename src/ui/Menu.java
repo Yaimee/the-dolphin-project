@@ -10,6 +10,8 @@ class Application{
 
     static Scanner scan = new Scanner(System.in);
 
+    DataHandler dh = DataHandler.getInstance();
+
     Chairman ch = new Chairman();
     Accountant ac = new Accountant();
     //Trainer tr = new Trainer();
@@ -106,8 +108,7 @@ class Application{
         int choiceOfOption = chooseFromOptions(2);
 
         if (choiceOfOption == 1) {
-            //Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);
-            Member member = new Member(15, "Sarah", "female", "john@gmail.com", TypeOfSwimmer.CASUAL, Team.JUNIOR);
+            Member member = ch.initMemberCreation();
             ch.createNewMember(member);
             ac.initiateCreateSubscription(member);
         } else if (choiceOfOption == 2) {
@@ -117,24 +118,19 @@ class Application{
     public void accountantMenu() {
         System.out.println("\nThis is the Accountant's menu");
         displayAccountantMenu();
-        int choiceOfOption = chooseFromOptions(5);
+        int choiceOfOption = chooseFromOptions(4);
 
         //System.out.println("Code for changing subscription of member to passive");
         switch (choiceOfOption) {
             case 1:
-                ac.InitiateAddMemberToList();
-
-                break;
+                ac.InitiateAddMemberToNonPayingList();
             case 2:
-                System.out.println("Code for adding member to paying list");
-                break;
-            case 3:
                 ac.InitiateChangeMembershipToPassive();
                 break;
-            case 4:
+            case 3:
                 ac.initiateGetProjectedYearlyRevenue();
                 break;
-            case 5:
+            case 4:
                 run();
                 break;
         }
@@ -160,10 +156,9 @@ class Application{
     public void displayAccountantMenu() {
         System.out.println("Choose from the following four options");
         System.out.println("Press 1: Add member to non-paying members list");
-        System.out.println("Press 2: Add member to paying members list");
-        System.out.println("Press 3: Change subscription of member to passive");
-        System.out.println("Press 4: Show projected yearly revenue");
-        System.out.println("Press 5: Log out");
+        System.out.println("Press 2: Change subscription of member to passive");
+        System.out.println("Press 3: Show projected yearly revenue");
+        System.out.println("Press 4: Log out");
     }
     public void displayTrainerMenu() {
         System.out.println("Choose from the following five options");
@@ -175,7 +170,8 @@ class Application{
     }
 
     public void run() {
-        //ac.InitiateMembershipSweep();
+        dh.initMemberJson();
+        ac.InitiateMembershipSweep();
 
         System.out.println("\nChoose from the following three privileges");
         System.out.println("Press 1: Chairman");

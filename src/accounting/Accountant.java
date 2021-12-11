@@ -23,11 +23,10 @@ public class Accountant {
         sub.membershipSweep();
     }
 
-    public void InitiateAddMemberToList() {
+    public void InitiateAddMemberToNonPayingList() {
         System.out.print("Membership ID: ");
         int membershipId = scan.nextInt();
-
-        sub.addMemberToList(membershipId);
+        sub.addMemberToNonPayingList(membershipId);
     }
 
     public void InitiateChangeMembershipToPassive() {

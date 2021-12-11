@@ -7,10 +7,7 @@ import Chairman.TypeOfSwimmer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,10 +26,11 @@ public class Subscription {
     static int numberOfPassiveMemberships = 0;
 
     private ArrayList<Integer> numberOfSubscriptions = new ArrayList<>();
+    DataHandler dh = DataHandler.getInstance();
 
     public void createSubscription(Member member) {
         initiateNumberOfSubscriptions();
-        getTypeOfSubscription(member);
+        getTypeOfSubscription(member, true);
         writeMembersSub();
     }
 
@@ -49,7 +47,7 @@ public class Subscription {
 
     }
 
-    public void initiateNumberOfSubscriptions(){
+    private void initiateNumberOfSubscriptions() {
         try {
             Reader readerSub = null;
             try {
@@ -73,11 +71,11 @@ public class Subscription {
         return directory.list().length;
     }
 
-    public void membershipSweep(){
+    public void membershipSweep() {
         int length = lengthOfNonPayingMembersDirectory(); //referring to the length of the nonPayingMembers directory
         for (int i = 1; i <= length; i++) {
             File file = new File("members/nonPayingMembers/nonPayingMember" + "#" + i + ".json");
-            if(file.exists()) {
+            if (file.exists()) {
                 //inspired by https://stackoverflow.com/questions/15042855/delete-files-older-than-x-days
                 int maximumDifference = 28;
                 long difference = new Date().getTime() - file.lastModified();
@@ -88,12 +86,12 @@ public class Subscription {
         }
     }
 
-    public void addMemberToList(int membershipId) {
+    public void addMemberToNonPayingList(int membershipId) {
         int nonPayingMemberId = generateId();
-        DataHandler dh = DataHandler.getInstance();
         dh.setFilePath("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
-        dh.addMemberToList(dh.findMemberByID(membershipId));
-        dh.writeMembers();
+        dh.addMemberToNonPayingList(dh.findMemberByID(membershipId));
+        dh.writeMembersToSub();
+        dh.setFilePath("members/payingMembers.json");
         dh.deleteMember(membershipId);
     }
 
@@ -101,7 +99,7 @@ public class Subscription {
         int numberOfFiles = lengthOfNonPayingMembersDirectory();
         for (int i = 1; i <= numberOfFiles; i++) {
             File file = new File("members/nonPayingMembers/nonPayingMember" + "#" + i + ".json");
-            if(!file.exists()) {
+            if (!file.exists()) {
                 return i;
             }
         }
@@ -110,70 +108,53 @@ public class Subscription {
 
     //added code for clarity - should be deleted upon completion
     public void changeMembershipToPassive(int membershipId) {
+        initiateNumberOfSubscriptions();
+
         Member member = DataHandler.getInstance().findMemberByID(membershipId);
         int age = member.getAge();
         TypeOfSwimmer swimmer = member.getSwimmer();
-
-        if (age < 18 || age >= 60) {
-            if (age >= 60) {
-                System.out.println(numberOfPassiveMemberships);
-                numberOfSeniorRetired --;
-                System.out.println(numberOfPassiveMemberships);
-            } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                System.out.println(numberOfJuniorCasual);
-                numberOfJuniorCasual --;
-                System.out.println(numberOfJuniorCasual);
-            } else {
-                System.out.println(numberOfJuniorCompetitor);
-                numberOfJuniorCompetitor --;
-                System.out.println(numberOfJuniorCompetitor);
-            }
-        } else {
-            if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                System.out.println(numberOfSeniorCasual);
-                numberOfSeniorCasual --;
-                System.out.println(numberOfSeniorCasual);
-            } else {
-                System.out.println(numberOfSeniorCompetitor);
-                numberOfSeniorCompetitor --;
-                System.out.println(numberOfSeniorCompetitor);
-            }
-        }
-        System.out.println(numberOfPassiveMemberships);
-        numberOfPassiveMemberships ++;
-        System.out.println(numberOfPassiveMemberships);
+        getTypeOfSubscription(member, false);
+        numberOfSubscriptions.set(5, (numberOfSubscriptions.get(5) + 1));
+        writeMembersSub();
     }
 
+
     public int getProjectedYearlyRevenue() {
+        initiateNumberOfSubscriptions();
         int revenue = 0;
-        revenue += 1000 * (numberOfJuniorCasual + numberOfJuniorCompetitor);
-        revenue += 1600 * (numberOfSeniorCasual + numberOfSeniorCompetitor);
-        revenue += 1200 * numberOfSeniorRetired;
-        revenue += 500 * numberOfPassiveMemberships;
+        revenue += 1000 * ((numberOfSubscriptions.get(0)) + (numberOfSubscriptions.get(2)));
+        revenue += 1600 * ((numberOfSubscriptions.get(1)) + (numberOfSubscriptions.get(3)));
+        revenue += 1200 * numberOfSubscriptions.get(4);
+        revenue += 500 * numberOfSubscriptions.get(5);
         return revenue;
     }
 
-    public int getTypeOfSubscription(Member member) {
+    public void getTypeOfSubscription(Member member, boolean isPositiveOrNegative) {
         int age = member.getAge();
         TypeOfSwimmer swimmer = member.getSwimmer();
 
+        int positiveOrNegative = 0;
+
+        if (isPositiveOrNegative) {
+            positiveOrNegative = 1;
+        } else {
+            positiveOrNegative = -1;
+        }
+
         if (age < 18 || age >= 60) {
             if (age >= 60) {
-                numberOfSubscriptions.set(4, (numberOfSubscriptions.get(4) + 1));
-                return 1200;
+                numberOfSubscriptions.set(4, (numberOfSubscriptions.get(4) + positiveOrNegative));
             } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                numberOfSubscriptions.set(0, (numberOfSubscriptions.get(0) + 1));
+                numberOfSubscriptions.set(0, (numberOfSubscriptions.get(0) + positiveOrNegative));
             } else {
-                numberOfSubscriptions.set(2, (numberOfSubscriptions.get(2) + 1));
+                numberOfSubscriptions.set(2, (numberOfSubscriptions.get(2) + positiveOrNegative));
             }
-            return 1000;
         } else {
             if (swimmer.equals(TypeOfSwimmer.CASUAL)) {
-                numberOfSubscriptions.set(1, (numberOfSubscriptions.get(1) + 1));
+                numberOfSubscriptions.set(1, (numberOfSubscriptions.get(1) + positiveOrNegative));
             } else {
-                numberOfSubscriptions.set(3, (numberOfSubscriptions.get(3) + 1));
+                numberOfSubscriptions.set(3, (numberOfSubscriptions.get(3) + positiveOrNegative));
             }
-            return 1600;
         }
     }
 }
