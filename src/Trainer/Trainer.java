@@ -5,75 +5,94 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Trainer {
-    Analysis analyse = new Analysis();
-    Scanner sc = new Scanner(System.in);
-    ArrayList<Competition> competitions = new ArrayList<>();
-    DataHandler dh = DataHandler.getInstance();
-    String username;
-    String password;
+    private Analysis analyse = new Analysis();
+    private Scanner sc = new Scanner(System.in);
+    private ArrayList<Competition> competitions = new ArrayList<>();
+    private DataHandler dh = DataHandler.getInstance();
+    private final String username = "gucci";
+    private final String password = "prada";
     /*
     Trainer (String username, String password) {
             this.username = username;
             this.password = password;
     }*/
 
-    public void displayCasualTopFive(Discipline discipline, Team team) {
+    public void displayDailyTopFive(Discipline discipline, Team team) {
         System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
         analyse.printDailyTopFive(discipline,team);
     }
 
     public void createNewCompetition() {
         Discipline discipline;
-        int selectOption;
         Team team;
         String name;
+        String time;
+        boolean run;
+        int selectOption;
         int hours;
         int minutes;
-        String time;
-        System.out.print("Write the competition name: ");
-        name = sc.nextLine();
-        System.out.println("What kind of swimming discipline is the event?");
-        System.out.println("1. crawl");
-        System.out.println("2. butterfly");
-        System.out.println("3. breaststroke");
-        System.out.println("4. backstroke");
-        selectOption = sc.nextInt();
-        sc.nextLine();
-        switch(selectOption) {
-            case 1:
-                discipline = Discipline.CRAWL;
-                break;
-            case 2:
-                discipline = Discipline.BUTTERFLY;
-                break;
-            case 3:
-                discipline = Discipline.BREASTSTROKE;
-                break;
-            case 4:
-                discipline = Discipline.BACKSTROKE;
-                break;
-            default:
-                discipline = null;
-        }
-        System.out.println("When does the competition start?");
-        System.out.print("Insert hour: ");
-        hours = sc.nextInt();
-        sc.nextLine();
-        System.out.print("Insert minute: ");
-        minutes = sc.nextInt();
-        sc.nextLine();
-        time = String.format("%02d:%02d", hours, minutes);
-        System.out.println("Where is the competition held?");
-        String place = sc.nextLine();
-        System.out.println("Is it a junior or senior event? Insert \"1\" for junior or \"2\" for senior: ");
-        selectOption = sc.nextInt();
-        sc.nextLine();
-        if (selectOption == 1) {
-            team = Team.JUNIOR;
-        } else {
-            team = Team.SENIOR;
-        }
-        competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));
+
+        do {
+            run = false;
+            try {
+                System.out.print("Write the competition name: ");
+                name = sc.nextLine();
+                System.out.println("What kind of swimming discipline is the event?");
+                System.out.println("Press 1: crawl");
+                System.out.println("Press 2: butterfly");
+                System.out.println("Press 3: breaststroke");
+                System.out.println("Press 4: backstroke");
+                selectOption = sc.nextInt();
+                sc.nextLine();
+                switch (selectOption) {
+                    case 1 -> discipline = Discipline.CRAWL;
+                    case 2 -> discipline = Discipline.BUTTERFLY;
+                    case 3 -> discipline = Discipline.BREASTSTROKE;
+                    case 4 -> discipline = Discipline.BACKSTROKE;
+                    default -> {
+                        System.out.println("Illegal value. Try again");
+                        run = true;
+                        continue;
+                    }
+                }
+                System.out.println("When does the competition start?");
+                System.out.print("Insert hour: ");
+                hours = sc.nextInt();
+                sc.nextLine();
+                System.out.print("Insert minute: ");
+                minutes = sc.nextInt();
+                sc.nextLine();
+                time = String.format("%02d:%02d", hours, minutes);
+                System.out.println("Where is the competition held?");
+                String place = sc.nextLine();
+                System.out.println("Is it a junior or senior event?");
+                System.out.println("Press 1: Junior");
+                System.out.println("Press 2: Senior");
+                selectOption = sc.nextInt();
+                sc.nextLine();
+                if (selectOption == 1) {
+                    team = Team.JUNIOR;
+                } else if (selectOption == 2){
+                    team = Team.SENIOR;
+                } else {
+                    System.out.println("Illegal value. Try again");
+                    run = true;
+                    continue;
+                }
+                competitions.add(new Competition(name, discipline, time, place, team, addCompetitors(team, discipline)));
+            } catch (Exception e) {
+                System.out.println("Illegal value. Try again");
+                run = true;
+            }
+        } while(run);
+    }
+
+    public ArrayList<Competition> getCompetitions() {
+        return competitions;
+    }
+
+    public Analysis getAnalyse() {
+        return analyse;
     }
 
     public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
@@ -167,5 +186,13 @@ public class Trainer {
         } else {
             System.out.println("No members for logging");
         }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

@@ -35,4 +35,11 @@ public class Chairman {
         System.out.println("Added member: " + member.getName());
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
 }
