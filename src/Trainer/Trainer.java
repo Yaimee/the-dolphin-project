@@ -81,6 +81,8 @@ public class Trainer {
                     continue;
                 }
                 competitions.add(new Competition(name, discipline, time, place, team, addCompetitors(team, discipline)));
+                dh.addToCompetitionsList(new Competition(name, discipline, time, place, team, addCompetitors(team, discipline)));
+                dh.writeCompetitions();
             } catch (Exception e) {
                 System.out.println("Illegal value. Try again");
                 run = true;

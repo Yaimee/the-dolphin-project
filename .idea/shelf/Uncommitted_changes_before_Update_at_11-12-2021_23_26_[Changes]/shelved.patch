@@ -1,0 +1,1053 @@
+Index: src/accounting/Subscription.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package accounting;\r\n\r\nimport Chairman.Chairman;\r\nimport Chairman.DataHandler;\r\nimport Chairman.Member;\r\nimport Chairman.TypeOfSwimmer;\r\nimport com.google.gson.Gson;\r\nimport com.google.gson.GsonBuilder;\r\n\r\nimport java.io.*;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Paths;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\nimport java.util.Date;\r\npublic class Subscription {\r\n\r\n    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();\r\n    private Chairman ch = new Chairman();\r\n\r\n    static int numberOfJuniorCasual = 0;\r\n    static int numberOfSeniorCasual = 0;\r\n    static int numberOfJuniorCompetitor = 0;\r\n    static int numberOfSeniorCompetitor = 0;\r\n    static int numberOfSeniorRetired = 0;\r\n    static int numberOfPassiveMemberships = 0;\r\n\r\n    private ArrayList<Integer> numberOfSubscriptions = new ArrayList<>();\r\n    DataHandler dh = DataHandler.getInstance();\r\n\r\n    public void createSubscription(Member member) {\r\n        initiateNumberOfSubscriptions();\r\n        getTypeOfSubscription(member, true);\r\n        writeMembersSub();\r\n    }\r\n\r\n    public void writeMembersSub() {\r\n\r\n        String toJson = gson.toJson(numberOfSubscriptions);\r\n        try {\r\n            FileWriter file = new FileWriter(\"members/numberOfSubscriptionsCounter.json\");\r\n            file.write(toJson);\r\n            file.close();\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n    }\r\n\r\n    private void initiateNumberOfSubscriptions() {\r\n        try {\r\n            Reader readerSub = null;\r\n            try {\r\n                readerSub = Files.newBufferedReader(Paths.get(\"members/numberOfSubscriptionsCounter.json\"));\r\n\r\n            } catch (IOException e) {\r\n                e.printStackTrace();\r\n            }\r\n\r\n            Integer[] mJson = gson.fromJson(readerSub, Integer[].class);\r\n            numberOfSubscriptions.addAll(Arrays.asList(mJson));\r\n\r\n        } catch (NullPointerException e) {\r\n            System.out.println(\"Nothing is right\");\r\n        }\r\n\r\n    }\r\n\r\n    public int lengthOfNonPayingMembersDirectory() {\r\n        File directory = new File(\"members/nonPayingMembers/\");\r\n        return directory.list().length;\r\n    }\r\n\r\n    public void membershipSweep() {\r\n        int length = lengthOfNonPayingMembersDirectory(); //referring to the length of the nonPayingMembers directory\r\n        for (int i = 1; i <= length; i++) {\r\n            File file = new File(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + i + \".json\");\r\n            if (file.exists()) {\r\n                //inspired by https://stackoverflow.com/questions/15042855/delete-files-older-than-x-days\r\n                int maximumDifference = 28;\r\n                long difference = new Date().getTime() - file.lastModified();\r\n                if (difference > (long) maximumDifference * 24 * 60 * 60 * 1000) {\r\n                    file.delete();\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    public void addMemberToNonPayingList(int membershipId) {\r\n        int nonPayingMemberId = generateId();\r\n        dh.setFilePath(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + nonPayingMemberId + \".json\");\r\n        dh.addMemberToNonPayingList(dh.findMemberByID(membershipId));\r\n        dh.writeMembersToSub();\r\n        dh.setFilePath(\"members/payingMembers.json\");\r\n        dh.deleteMember(membershipId);\r\n    }\r\n\r\n    public int generateId() {\r\n        int numberOfFiles = lengthOfNonPayingMembersDirectory();\r\n        for (int i = 1; i <= numberOfFiles; i++) {\r\n            File file = new File(\"members/nonPayingMembers/nonPayingMember\" + \"#\" + i + \".json\");\r\n            if (!file.exists()) {\r\n                return i;\r\n            }\r\n        }\r\n        return numberOfFiles + 1;\r\n    }\r\n\r\n    //added code for clarity - should be deleted upon completion\r\n    public void changeMembershipToPassive(int membershipId) {\r\n        initiateNumberOfSubscriptions();\r\n\r\n        Member member = DataHandler.getInstance().findMemberByID(membershipId);\r\n        int age = member.getAge();\r\n        TypeOfSwimmer swimmer = member.getSwimmer();\r\n        getTypeOfSubscription(member, false);\r\n        numberOfSubscriptions.set(5, (numberOfSubscriptions.get(5) + 1));\r\n        writeMembersSub();\r\n    }\r\n\r\n\r\n    public int getProjectedYearlyRevenue() {\r\n        initiateNumberOfSubscriptions();\r\n        int revenue = 0;\r\n        revenue += 1000 * ((numberOfSubscriptions.get(0)) + (numberOfSubscriptions.get(2)));\r\n        revenue += 1600 * ((numberOfSubscriptions.get(1)) + (numberOfSubscriptions.get(3)));\r\n        revenue += 1200 * numberOfSubscriptions.get(4);\r\n        revenue += 500 * numberOfSubscriptions.get(5);\r\n        return revenue;\r\n    }\r\n\r\n    public void getTypeOfSubscription(Member member, boolean isPositiveOrNegative) {\r\n        int age = member.getAge();\r\n        TypeOfSwimmer swimmer = member.getSwimmer();\r\n\r\n        int positiveOrNegative = 0;\r\n\r\n        if (isPositiveOrNegative) {\r\n            positiveOrNegative = 1;\r\n        } else {\r\n            positiveOrNegative = -1;\r\n        }\r\n\r\n        if (age < 18 || age >= 60) {\r\n            if (age >= 60) {\r\n                numberOfSubscriptions.set(4, (numberOfSubscriptions.get(4) + positiveOrNegative));\r\n            } else if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\r\n                numberOfSubscriptions.set(0, (numberOfSubscriptions.get(0) + positiveOrNegative));\r\n            } else {\r\n                numberOfSubscriptions.set(2, (numberOfSubscriptions.get(2) + positiveOrNegative));\r\n            }\r\n        } else {\r\n            if (swimmer.equals(TypeOfSwimmer.CASUAL)) {\r\n                numberOfSubscriptions.set(1, (numberOfSubscriptions.get(1) + positiveOrNegative));\r\n            } else {\r\n                numberOfSubscriptions.set(3, (numberOfSubscriptions.get(3) + positiveOrNegative));\r\n            }\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/accounting/Subscription.java b/src/accounting/Subscription.java
+--- a/src/accounting/Subscription.java	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/src/accounting/Subscription.java	(date 1639261396121)
+@@ -68,7 +68,7 @@
+ 
+     public int lengthOfNonPayingMembersDirectory() {
+         File directory = new File("members/nonPayingMembers/");
+-        return directory.list().length;
++        return directory.list()==null?0:directory.list().length;
+     }
+ 
+     public void membershipSweep() {
+Index: src/ui/Menu.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ui;\r\n\r\nimport Chairman.*;\r\n//import Trainer.Trainer;\r\nimport accounting.Accountant;\r\n\r\nimport java.util.Scanner;\r\n\r\nclass Application{\r\n\r\n    static Scanner scan = new Scanner(System.in);\r\n\r\n    DataHandler dh = DataHandler.getInstance();\r\n\r\n    Chairman ch = new Chairman();\r\n    Accountant ac = new Accountant();\r\n    //Trainer tr = new Trainer();\r\n\r\n    public boolean doesStringRepresentInt(String string) {\r\n\r\n        if(string == null) {\r\n            return false;\r\n        }\r\n\r\n        int length = string.length();\r\n        if(length == 0) {\r\n            return false;\r\n        }\r\n\r\n        for (int i = 0; i < length; i++) {\r\n            char c = string.charAt(i);\r\n            if (c < '0' || c > '9') {\r\n                return false;\r\n            }\r\n        }\r\n        return true;\r\n    }\r\n\r\n    public int chooseFromOptions(int numberOfAvailableOptions) {\r\n\r\n        while(true) {\r\n            String choiceAsString = scan.nextLine();\r\n            boolean isInt = doesStringRepresentInt(choiceAsString);\r\n\r\n            while (isInt) {\r\n                int choiceAsInt = Integer.parseInt(choiceAsString);\r\n                if (choiceAsInt < 1 || choiceAsInt > numberOfAvailableOptions) {\r\n                    System.out.println(\"Invalid input\");\r\n                    choiceAsString = scan.nextLine();\r\n                    isInt = doesStringRepresentInt(choiceAsString);\r\n                } else {\r\n                    for (int i = 1; i <= numberOfAvailableOptions; i++) {\r\n                        if (choiceAsInt == i) {\r\n                            return choiceAsInt;\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n            if (!isInt) {\r\n                System.out.println(\"Invalid input\");\r\n            }\r\n        }\r\n    }\r\n\r\n    public void login(int oneTwoOrThree) {\r\n\r\n        String username = \"\";\r\n        String password = \"\";\r\n        boolean wrongLogin = true;\r\n\r\n            while(wrongLogin) {\r\n                System.out.print(\"Username: \");\r\n                String usernameInput = scan.nextLine();\r\n                System.out.print(\"Password: \");\r\n                String passwordInput = scan.nextLine();\r\n\r\n                switch (oneTwoOrThree) {\r\n                    case 1:\r\n                        username = ch.getUsername();\r\n                        password = ch.getPassword();\r\n                        break;\r\n                    case 2:\r\n                        username = ac.getUsername();\r\n                        password = ac.getPassword();\r\n                        break;\r\n                    case 3:\r\n                        //username = tr.getUsername();\r\n                        //password = tr.getPassword();\r\n                        break;\r\n                }\r\n\r\n                if(usernameInput.equals(username) && passwordInput.equals(password)) {\r\n                    wrongLogin = false;\r\n                    switch (oneTwoOrThree) {\r\n                        case 1 -> chairmanMenu();\r\n                        case 2 -> accountantMenu();\r\n                        case 3 -> trainerMenu();\r\n                    }\r\n                } else {\r\n                    System.out.println(\"Invalid input\\n\");\r\n                }\r\n            }\r\n    }\r\n\r\n    public void chairmanMenu() {\r\n        System.out.println(\"\\nThis is the Chairman's menu\");\r\n        displayChairmanMenu();\r\n        int choiceOfOption = chooseFromOptions(2);\r\n\r\n        if (choiceOfOption == 1) {\r\n            Member member = ch.initMemberCreation();\r\n            ch.createNewMember(member);\r\n            ac.initiateCreateSubscription(member);\r\n        } else if (choiceOfOption == 2) {\r\n            run();\r\n        }\r\n    }\r\n    public void accountantMenu() {\r\n        System.out.println(\"\\nThis is the Accountant's menu\");\r\n        displayAccountantMenu();\r\n        int choiceOfOption = chooseFromOptions(4);\r\n\r\n        //System.out.println(\"Code for changing subscription of member to passive\");\r\n        switch (choiceOfOption) {\r\n            case 1:\r\n                ac.InitiateAddMemberToNonPayingList();\r\n            case 2:\r\n                ac.InitiateChangeMembershipToPassive();\r\n                break;\r\n            case 3:\r\n                ac.initiateGetProjectedYearlyRevenue();\r\n                break;\r\n            case 4:\r\n                run();\r\n                break;\r\n        }\r\n    }\r\n    public void trainerMenu() {\r\n        System.out.println(\"\\nThis is the Trainer's menu\");\r\n        displayTrainerMenu();\r\n        int choiceOfOption = chooseFromOptions(4);\r\n\r\n        switch (choiceOfOption) {\r\n            case 1 -> System.out.println(\"Code for ?\");\r\n            case 2 -> System.out.println(\"Code for ?\");\r\n            case 3 -> System.out.println(\"Code for ?\");\r\n            case 4 -> run();\r\n        }\r\n    }\r\n\r\n    public void displayChairmanMenu() {\r\n        System.out.println(\"Choose from the following two options\");\r\n        System.out.println(\"Press 1: Create new member\");\r\n        System.out.println(\"Press 2: Log out\");\r\n    }\r\n    public void displayAccountantMenu() {\r\n        System.out.println(\"Choose from the following four options\");\r\n        System.out.println(\"Press 1: Add member to non-paying members list\");\r\n        System.out.println(\"Press 2: Change subscription of member to passive\");\r\n        System.out.println(\"Press 3: Show projected yearly revenue\");\r\n        System.out.println(\"Press 4: Log out\");\r\n    }\r\n    public void displayTrainerMenu() {\r\n        System.out.println(\"Choose from the following five options\");\r\n        System.out.println(\"Press 1: Create competition\");\r\n        System.out.println(\"Press 2: Competition list\");\r\n        System.out.println(\"Press 3: Log daily performance\");\r\n        System.out.println(\"Press 4: See daily top five\");\r\n        System.out.println(\"Press 5: Log out\");\r\n    }\r\n\r\n    public void run() {\r\n        dh.initMemberJson();\r\n        ac.InitiateMembershipSweep();\r\n\r\n        System.out.println(\"\\nChoose from the following three privileges\");\r\n        System.out.println(\"Press 1: Chairman\");\r\n        System.out.println(\"Press 2: Accountant\");\r\n        System.out.println(\"Press 3: Trainer\");\r\n        System.out.println(\"Press 4: Quit\");\r\n\r\n        int choiceOfPrivilege = chooseFromOptions(4);\r\n\r\n        switch (choiceOfPrivilege) {\r\n            case 1 -> login(1);\r\n            case 2 -> login(2);\r\n            case 3 -> login(3);\r\n            case 4 -> System.out.println();\r\n        }\r\n    }\r\n}\r\n\r\npublic class Menu {\r\n    public static void main(String[] args) {\r\n        new Application().run();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/ui/Menu.java b/src/ui/Menu.java
+--- a/src/ui/Menu.java	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/src/ui/Menu.java	(date 1639261396122)
+@@ -1,7 +1,7 @@
+ package ui;
+ 
+ import Chairman.*;
+-//import Trainer.Trainer;
++import Trainer.*;
+ import accounting.Accountant;
+ 
+ import java.util.Scanner;
+@@ -14,7 +14,8 @@
+ 
+     Chairman ch = new Chairman();
+     Accountant ac = new Accountant();
+-    //Trainer tr = new Trainer();
++    Trainer tr = new Trainer();
++    boolean run = true;
+ 
+     public boolean doesStringRepresentInt(String string) {
+ 
+@@ -73,7 +74,6 @@
+                 String usernameInput = scan.nextLine();
+                 System.out.print("Password: ");
+                 String passwordInput = scan.nextLine();
+-
+                 switch (oneTwoOrThree) {
+                     case 1:
+                         username = ch.getUsername();
+@@ -84,8 +84,8 @@
+                         password = ac.getPassword();
+                         break;
+                     case 3:
+-                        //username = tr.getUsername();
+-                        //password = tr.getPassword();
++                        username = tr.getUsername();
++                        password = tr.getPassword();
+                         break;
+                 }
+ 
+@@ -124,6 +124,7 @@
+         switch (choiceOfOption) {
+             case 1:
+                 ac.InitiateAddMemberToNonPayingList();
++                break;
+             case 2:
+                 ac.InitiateChangeMembershipToPassive();
+                 break;
+@@ -136,16 +137,24 @@
+         }
+     }
+     public void trainerMenu() {
+-        System.out.println("\nThis is the Trainer's menu");
+-        displayTrainerMenu();
+-        int choiceOfOption = chooseFromOptions(4);
++        DataHandler dh = DataHandler.getInstance();
++        do {
++            System.out.println("\nThis is the Trainer's menu");
++            displayTrainerMenu();
++            int choiceOfOption = chooseFromOptions(5);
+ 
+-        switch (choiceOfOption) {
+-            case 1 -> System.out.println("Code for ?");
+-            case 2 -> System.out.println("Code for ?");
+-            case 3 -> System.out.println("Code for ?");
+-            case 4 -> run();
+-        }
++            switch (choiceOfOption) {
++                case 1 -> tr.createNewCompetition();
++                case 2 -> competitionListMenu();
++                case 3 -> tr.logDailyPerformance();
++                case 4 -> displayDailyTopFiveMenu();
++                case 5 -> {
++                    run = false;
++                    dh.addToCompetitionsList(tr.getCompetitions());
++                    run();
++                }
++            }
++        } while (run);
+     }
+ 
+     public void displayChairmanMenu() {
+@@ -162,13 +171,170 @@
+     }
+     public void displayTrainerMenu() {
+         System.out.println("Choose from the following five options");
+-        System.out.println("Press 1: Create competition");
++        System.out.println("Press 1: Create new competition");
+         System.out.println("Press 2: Competition list");
+         System.out.println("Press 3: Log daily performance");
+-        System.out.println("Press 4: See daily top five");
++        System.out.println("Press 4: Display daily top five");
+         System.out.println("Press 5: Log out");
+     }
+ 
++    public void competitionListMenu() {
++        System.out.println("Select a competition to preview or edit");
++        if (tr.getCompetitionList()) {
++            int selectOption = chooseFromOptions(11);
++            competitionSelectedMenu(selectOption);
++        }
++    }
++
++    public void competitionSelectedMenu(int option) {
++        boolean run2 = true;
++        do {
++            try {
++                System.out.println(tr.getCompetitions().get(option - 1).getName() + " selected");
++                System.out.println("1. print competition details");
++                System.out.println("2. log performance");
++                System.out.println("3. print top five");
++                System.out.println("4. add competitors");
++                System.out.println("5. remove competitor");
++                System.out.println("6. edit time of event");
++                System.out.println("7. edit place of event");
++                System.out.println("8. edit discipline");
++                System.out.println("9. edit team");
++                System.out.println("10. delete competition");
++                System.out.println("11. return to menu");
++                int selectOption = scan.nextInt();
++                scan.nextLine();
++                switch(selectOption) {
++                    case 1:
++                        tr.getCompetitions().get(option - 1).printCompetitionDetails();
++                        break;
++                    case 2:
++                        if (tr.getCompetitions().get(option - 1).getMemberList().isEmpty()) {
++                            System.out.println("No competitors registered in the competition");
++                        } else {
++                            tr.getCompetitions().get(option - 1).logPerformance();
++                        }
++                        break;
++                    case 3:
++                        tr.getCompetitions().get(option - 1).printTopFiveList();
++                        break;
++                    case 4:
++                        Discipline discipline = tr.getCompetitions().get(option - 1).getDiscipline();
++                        Team team = tr.getCompetitions().get(option - 1).getTeam();
++                        tr.getCompetitions().get(option - 1).addCompetitors(tr.getAnalyse().getDailyTopFive(discipline, team));
++                        break;
++                    case 5:
++                        tr.getCompetitions().get(option - 1).removeCompetitor();
++                        break;
++                    case 6:
++                        int hour = scan.nextInt();
++                        scan.nextLine();
++                        int minute = scan.nextInt();
++                        scan.nextLine();
++                        tr.getCompetitions().get(option - 1).setTime(hour, minute);
++                        break;
++                    case 7:
++                        String place = scan.nextLine();
++                        tr.getCompetitions().get(option - 1).setPlace(place);
++                        break;
++                    case 8:
++                        do {
++                            run = false;
++                            System.out.println("Current discipline is" + tr.getCompetitions().get(option - 1).getDiscipline());
++                            int disciplineSelect = scan.nextInt();
++                            scan.nextLine();
++                            switch (disciplineSelect) {
++                                case 1:
++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.CRAWL);
++                                    break;
++                                case 2:
++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BUTTERFLY);
++                                    break;
++                                case 3:
++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BREASTSTROKE);
++                                    break;
++                                case 4:
++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BACKSTROKE);
++                                    break;
++                                default:
++                                    System.out.println("Illegal value. Try again");
++                                    run = true;
++                            }
++                        } while (run);
++                        break;
++                    case 9:
++                        do {
++                            run = false;
++                            System.out.println("Current team is " + tr.getCompetitions().get(option - 1).getTeam());
++                            System.out.println("Select team");
++                            System.out.println("1. junior");
++                            System.out.println("2. senior");
++                            try {
++                                int teamSelect = scan.nextInt();
++                                scan.nextLine();
++                                if (teamSelect == 1) {
++                                    tr.getCompetitions().get(option - 1).setTeam(Team.JUNIOR);
++                                } else if (teamSelect == 2) {
++                                    tr.getCompetitions().get(option - 1).setTeam(Team.SENIOR);
++                                } else {
++                                    System.out.println("Illegal value. Try again");
++                                    run = true;
++                                }
++                            } catch (Exception e) {
++                                System.out.println("Illegal value. Try again");
++                                run = true;
++                            }
++                        } while(run);
++                        break;
++                    case 10:
++                        tr.getCompetitions().remove(option - 1);
++                        run2 = false;
++                    case 11:
++                        run2 = false;
++                }
++            } catch (Exception e) {
++                System.out.println("Illegal value! Try again.");
++            }
++        } while (run2);
++    }
++
++
++    public void displayDailyTopFiveMenu() {
++
++        Discipline discipline = null;
++
++        System.out.println("Display daily top five in the following disciplines");
++        System.out.println("Press 1: Crawl");
++        System.out.println("Press 2: Butterfly");
++        System.out.println("Press 3: Breaststroke");
++        System.out.println("Press 4: Backstroke");
++        int choiceOfPrivilege = chooseFromOptions(4);
++        switch(choiceOfPrivilege) {
++            case 1 -> discipline = Discipline.CRAWL;
++            case 2 -> discipline = Discipline.BUTTERFLY;
++            case 3 -> discipline = Discipline.BREASTSTROKE;
++            case 4 -> discipline = Discipline.BACKSTROKE;
++        }
++        tr.displayDailyTopFive(discipline, juniorOrSenior());
++    }
++
++    private Team juniorOrSenior() {
++
++        Team team = null;
++
++        System.out.println("Press 1: Junior");
++        System.out.println("Press 2: Senior");
++        int selectOption = chooseFromOptions(2);
++        if (selectOption == 1) {
++            team = Team.JUNIOR;
++        } else if (selectOption == 2) {
++            team = Team.SENIOR;
++        }
++        return team;
++    }
++
++
++
+     public void run() {
+         dh.initMemberJson();
+         ac.InitiateMembershipSweep();
+Index: members/payingMembers.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[\r\n\r\n]
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/members/payingMembers.json b/members/payingMembers.json
+--- a/members/payingMembers.json	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/members/payingMembers.json	(date 1639261396114)
+@@ -1,3 +1,1 @@
+-[
+-
+-]
+\ No newline at end of file
++[]
+\ No newline at end of file
+Index: src/Chairman/DataHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Chairman;\r\n\r\nimport com.google.gson.Gson;\r\nimport com.google.gson.GsonBuilder;\r\n\r\nimport java.io.FileWriter;\r\nimport java.io.IOException;\r\nimport java.io.Reader;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Paths;\r\nimport java.util.ArrayList;\r\nimport java.util.Arrays;\r\n\r\npublic class DataHandler {\r\n\r\n    //Singleton instance\r\n    private static DataHandler single_instance = null;\r\n    // Filepath\r\n    private String filePath = \"members/payingMembers.json\";\r\n    // List of paying members\r\n    private final ArrayList<Member> memberList = new ArrayList<Member>();\r\n    // List of non-paying members\r\n    private final ArrayList<Member> nonPayingMemberList = new ArrayList<>();\r\n    //  Du bliver nødt til at adde en ny arraylist, også lave metoder tilhørende den arraylist for at kunne tilføje/slette\r\n    // Json writer object\r\n    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();\r\n\r\n    public void writeMembers() {\r\n\r\n        String toJson = gson.toJson(memberList);\r\n        try {\r\n            FileWriter file = new FileWriter(this.filePath);\r\n            file.write(toJson);\r\n            file.close();\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    public void writeMembersToSub() {\r\n\r\n        String toJson = gson.toJson(nonPayingMemberList);\r\n        try {\r\n            FileWriter file = new FileWriter(this.filePath);\r\n            file.write(toJson);\r\n            file.close();\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    public void addMemberToNonPayingList(Member member) {\r\n        nonPayingMemberList.add(member);\r\n        //deleteMember(member.getID());\r\n    }\r\n\r\n    public void addMemberToList(Member memberToAdd){\r\n        memberList.add(memberToAdd);\r\n    }\r\n\r\n    public void deleteMember(int id){\r\n        for (int i = 0; i < memberList.size(); i++) {\r\n            if(memberList.get(i).getID() == id){\r\n                memberList.remove(i);\r\n                writeMembers();\r\n                break;\r\n            }\r\n        }\r\n    }\r\n\r\n    public void printMemberList(){\r\n        System.out.println(memberList);\r\n    }\r\n\r\n    public void initMemberJson(){\r\n        try {\r\n            Reader reader = null;\r\n            try {\r\n                reader = Files.newBufferedReader(Paths.get(\"members/payingMembers.json\"));\r\n\r\n            } catch (IOException e) {\r\n                e.printStackTrace();\r\n            }\r\n\r\n            Member[] fromJson = gson.fromJson(reader, Member[].class);\r\n            memberList.addAll(Arrays.asList(fromJson));\r\n\r\n        } catch (NullPointerException e) {\r\n            System.out.println(\"No existing users found\");\r\n        }\r\n\r\n    }\r\n\r\n    public ArrayList<Member> findMembersByName(String name){\r\n        ArrayList<Member> foundMembers = new ArrayList<>();\r\n\r\n        for (Member member : memberList)\r\n            if(member.getName().matches(name))\r\n                foundMembers.add(member);\r\n\r\n        return foundMembers;\r\n    }\r\n\r\n    public Member findMemberByID(int id){\r\n\r\n        for(Member member : memberList)\r\n            if(member.getID() == id)\r\n                return member;\r\n        return null;\r\n    }\r\n\r\n    public ArrayList<Integer> getMemberIDsByName(String name){\r\n        ArrayList<Integer> foundIDs = new ArrayList<>();\r\n\r\n        for (Member member : memberList)\r\n            if(member.getName().matches(name))\r\n                foundIDs.add(member.getID());\r\n\r\n        return foundIDs;\r\n    }\r\n\r\n    public void setFilePath(String filePath) {\r\n        this.filePath = filePath;\r\n    }\r\n\r\n    private DataHandler()\r\n    {}\r\n\r\n    public static DataHandler getInstance()\r\n    {\r\n        if (single_instance == null)\r\n            single_instance = new DataHandler();\r\n\r\n        return single_instance;\r\n    }\r\n\r\n    public ArrayList<Member> getMemberList() {\r\n        return memberList;\r\n    }\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Chairman/DataHandler.java b/src/Chairman/DataHandler.java
+--- a/src/Chairman/DataHandler.java	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/src/Chairman/DataHandler.java	(date 1639261396120)
+@@ -2,6 +2,7 @@
+ 
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
++import Trainer.*;
+ 
+ import java.io.FileWriter;
+ import java.io.IOException;
+@@ -19,8 +20,11 @@
+     private String filePath = "members/payingMembers.json";
+     // List of paying members
+     private final ArrayList<Member> memberList = new ArrayList<Member>();
+-    // List of non-paying members
+-    private final ArrayList<Member> nonPayingMemberList = new ArrayList<>();
++    private ArrayList<Competition> competitions = new ArrayList<>();
++    private ArrayList<Member> nonPayingMemberList = new ArrayList<>();
++
++    // List of non paying members
++    //private final ArrayList<Member> nonPayingMemberList = new ArrayList<Member>();
+     //  Du bliver nødt til at adde en ny arraylist, også lave metoder tilhørende den arraylist for at kunne tilføje/slette
+     // Json writer object
+     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+@@ -37,6 +41,18 @@
+         }
+     }
+ 
++    public void writeCompetitions() {
++        String toJson = gson.toJson(competitions);
++        try {
++            FileWriter file = new FileWriter(this.filePath);
++            file.write(toJson);
++            file.close();
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++    }
++
++
+     public void writeMembersToSub() {
+ 
+         String toJson = gson.toJson(nonPayingMemberList);
+@@ -54,6 +70,11 @@
+         //deleteMember(member.getID());
+     }
+ 
++
++    public void addToCompetitionsList(ArrayList<Competition> competitionsToAdd) {
++        competitions = competitionsToAdd;
++        writeCompetitions();
++    }
+     public void addMemberToList(Member memberToAdd){
+         memberList.add(memberToAdd);
+     }
+@@ -67,12 +88,38 @@
+             }
+         }
+     }
++    /*
++
++    public void deleteMember(int id){
++        for (Member member : memberList) {
++            if(member.getID() == id){
++                memberList.remove(member);
++                writeMembers();
++                break;
++            }
++        }
++    }
++    * */
+ 
+     public void printMemberList(){
+         System.out.println(memberList);
+     }
+ 
++    public void initCompetitionsJson() {
++        try {
++            Reader reader = null;
++            try {
++                reader = Files.newBufferedReader(Paths.get("Competitions/Compitions.json"));
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++        } catch (NullPointerException e) {
++            System.out.println("No competitions found");
++        }
++    }
+     public void initMemberJson(){
++        if (memberList != null && memberList.size() > 0)
++            return;
+         try {
+             Reader reader = null;
+             try {
+Index: src/Trainer/Trainer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Trainer;\r\nimport Chairman.*;\r\nimport accounting.*;\r\nimport java.util.ArrayList;\r\nimport java.util.Scanner;\r\n\r\npublic class Trainer {\r\n    Analysis analyse = new Analysis();\r\n    Scanner sc = new Scanner(System.in);\r\n    ArrayList<Competition> competitions = new ArrayList<>();\r\n    DataHandler dh = DataHandler.getInstance();\r\n    String username;\r\n    String password;\r\n    /*\r\n    Trainer (String username, String password) {\r\n            this.username = username;\r\n            this.password = password;\r\n    }*/\r\n\r\n    public void displayCasualTopFive(Discipline discipline, Team team) {\r\n        System.out.println(\"Name:\\t\\t\\tTime:\\t\\t\\tDiscipline: \" + discipline + \"\\tTeam: \" + team);\r\n        analyse.printDailyTopFive(discipline,team);\r\n    }\r\n\r\n    public void createNewCompetition() {\r\n        Discipline discipline;\r\n        int selectOption;\r\n        Team team;\r\n        String name;\r\n        int hours;\r\n        int minutes;\r\n        String time;\r\n        System.out.print(\"Write the competition name: \");\r\n        name = sc.nextLine();\r\n        System.out.println(\"What kind of swimming discipline is the event?\");\r\n        System.out.println(\"1. crawl\");\r\n        System.out.println(\"2. butterfly\");\r\n        System.out.println(\"3. breaststroke\");\r\n        System.out.println(\"4. backstroke\");\r\n        selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        switch(selectOption) {\r\n            case 1:\r\n                discipline = Discipline.CRAWL;\r\n                break;\r\n            case 2:\r\n                discipline = Discipline.BUTTERFLY;\r\n                break;\r\n            case 3:\r\n                discipline = Discipline.BREASTSTROKE;\r\n                break;\r\n            case 4:\r\n                discipline = Discipline.BACKSTROKE;\r\n                break;\r\n            default:\r\n                discipline = null;\r\n        }\r\n        System.out.println(\"When does the competition start?\");\r\n        System.out.print(\"Insert hour: \");\r\n        hours = sc.nextInt();\r\n        sc.nextLine();\r\n        System.out.print(\"Insert minute: \");\r\n        minutes = sc.nextInt();\r\n        sc.nextLine();\r\n        time = String.format(\"%02d:%02d\", hours, minutes);\r\n        System.out.println(\"Where is the competition held?\");\r\n        String place = sc.nextLine();\r\n        System.out.println(\"Is it a junior or senior event? Insert \\\"1\\\" for junior or \\\"2\\\" for senior: \");\r\n        selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        if (selectOption == 1) {\r\n            team = Team.JUNIOR;\r\n        } else {\r\n            team = Team.SENIOR;\r\n        }\r\n        competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));\r\n    }\r\n\r\n    public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {\r\n        System.out.println(\"Would you like to add all competitors from the top five list now? (y/n)\");\r\n        System.out.println(\"To pick them one by one, add them later.\");\r\n        String selectOption = sc.nextLine();\r\n        if(selectOption.equalsIgnoreCase(\"n\")) {\r\n            return new ArrayList<>();\r\n        } else {\r\n            System.out.println(\"Competitors: \");\r\n            System.out.println(\"Name:\\t\\t\\tAge:\");\r\n            analyse.printDailyTopFive(discipline, team);\r\n            return analyse.getDailyTopFive(discipline,team);\r\n        }\r\n    }\r\n\r\n    /*public void addCompetitiorsToCompetition() {\r\n        System.out.println(\"To which competition would you like to add competitors?\");\r\n        for ( int i = 0; i < competitions.size(); i++) {\r\n            System.out.println((i + 1)+ \". \" + competitions.get(i).getName());\r\n        }\r\n        int selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        Discipline discipline = competitions.get(selectOption - 1).getDiscipline();\r\n        Team team = competitions.get(selectOption - 1).getTeam();\r\n        competitions.get(selectOption - 1).addCompetitors(analyse.getDailyTopFive(discipline,team));\r\n        System.out.println(\"added\");\r\n    }*/\r\n\r\n    public boolean getCompetitionList(){\r\n        boolean trueOrFalse;\r\n        if (competitions.size() == 0) {\r\n            System.out.println(\"No competitions registered\");\r\n            trueOrFalse = false;\r\n        } else {\r\n            trueOrFalse = true;\r\n            System.out.println(\"Competitions registered:\");\r\n            for (int i = 0; i < competitions.size(); i++) {\r\n                System.out.println((i + 1) + \". \" + competitions.get(i).getName());\r\n            }\r\n        }\r\n        return trueOrFalse;\r\n    }\r\n\r\n    public void logDailyPerformance() {\r\n        dh.initMemberJson();\r\n        if (!dh.getMemberList().isEmpty()) {\r\n            Discipline discipline;\r\n            System.out.println(\"Members available for logging: \");\r\n            for (int i = 0; i < dh.getMemberList().size(); i++) {\r\n                System.out.println((i + 1) + \". \" + dh.getMemberList().get(i).getName());\r\n            }\r\n            System.out.println(\"To select a member, insert the corresponding value\");\r\n            int memberSelect = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(dh.getMemberList().get(memberSelect - 1).getName() + \" selected.\");\r\n            System.out.println(\"Insert time for logging\");\r\n            System.out.println(\"minutes: \");\r\n            int minutes = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"seconds: \");\r\n            int seconds = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"milliseconds: \");\r\n            int milliseconds = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"Insert discipline\");\r\n            System.out.println(\"1. crawl\");\r\n            System.out.println(\"2. butterfly\");\r\n            System.out.println(\"3. breaststroke\");\r\n            System.out.println(\"4. backstroke\");\r\n            int selectOption = sc.nextInt();\r\n            sc.nextLine();\r\n            switch ((selectOption)) {\r\n                case 1:\r\n                    discipline = Discipline.CRAWL;\r\n                    break;\r\n                case 2:\r\n                    discipline = Discipline.BUTTERFLY;\r\n                    break;\r\n                case 3:\r\n                    discipline = Discipline.BREASTSTROKE;\r\n                    break;\r\n                case 4:\r\n                    discipline = Discipline.BACKSTROKE;\r\n                    break;\r\n                default:\r\n                    discipline = null;\r\n            }\r\n            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());\r\n        } else {\r\n            System.out.println(\"No members for logging\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Trainer/Trainer.java b/src/Trainer/Trainer.java
+--- a/src/Trainer/Trainer.java	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/src/Trainer/Trainer.java	(date 1639261396121)
+@@ -5,75 +5,99 @@
+ import java.util.Scanner;
+ 
+ public class Trainer {
+-    Analysis analyse = new Analysis();
+-    Scanner sc = new Scanner(System.in);
+-    ArrayList<Competition> competitions = new ArrayList<>();
+-    DataHandler dh = DataHandler.getInstance();
+-    String username;
+-    String password;
++    private Analysis analyse = new Analysis();
++    private Scanner sc = new Scanner(System.in);
++    private ArrayList<Competition> competitions = new ArrayList<>();
++    private int[] checkList = new int[0];
++    private DataHandler dh = DataHandler.getInstance();
++    private final String username = "gucci";
++    private final String password = "prada";
+     /*
+     Trainer (String username, String password) {
+             this.username = username;
+             this.password = password;
+     }*/
+ 
+-    public void displayCasualTopFive(Discipline discipline, Team team) {
++    public void displayDailyTopFive(Discipline discipline, Team team) {
+         System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
+         analyse.printDailyTopFive(discipline,team);
+     }
+ 
+     public void createNewCompetition() {
+         Discipline discipline;
+-        int selectOption;
+         Team team;
+         String name;
++        String time;
++        boolean run;
++        int selectOption;
+         int hours;
+         int minutes;
+-        String time;
+-        System.out.print("Write the competition name: ");
+-        name = sc.nextLine();
+-        System.out.println("What kind of swimming discipline is the event?");
+-        System.out.println("1. crawl");
+-        System.out.println("2. butterfly");
+-        System.out.println("3. breaststroke");
+-        System.out.println("4. backstroke");
+-        selectOption = sc.nextInt();
+-        sc.nextLine();
+-        switch(selectOption) {
+-            case 1:
+-                discipline = Discipline.CRAWL;
+-                break;
+-            case 2:
+-                discipline = Discipline.BUTTERFLY;
+-                break;
+-            case 3:
+-                discipline = Discipline.BREASTSTROKE;
+-                break;
+-            case 4:
+-                discipline = Discipline.BACKSTROKE;
+-                break;
+-            default:
+-                discipline = null;
+-        }
+-        System.out.println("When does the competition start?");
+-        System.out.print("Insert hour: ");
+-        hours = sc.nextInt();
+-        sc.nextLine();
+-        System.out.print("Insert minute: ");
+-        minutes = sc.nextInt();
+-        sc.nextLine();
+-        time = String.format("%02d:%02d", hours, minutes);
+-        System.out.println("Where is the competition held?");
+-        String place = sc.nextLine();
+-        System.out.println("Is it a junior or senior event? Insert \"1\" for junior or \"2\" for senior: ");
+-        selectOption = sc.nextInt();
+-        sc.nextLine();
+-        if (selectOption == 1) {
+-            team = Team.JUNIOR;
+-        } else {
+-            team = Team.SENIOR;
+-        }
+-        competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));
++
++        do {
++            run = false;
++            try {
++                System.out.print("Write the competition name: ");
++                name = sc.nextLine();
++                System.out.println("What kind of swimming discipline is the event?");
++                System.out.println("Press 1: crawl");
++                System.out.println("Press 2: butterfly");
++                System.out.println("Press 3: breaststroke");
++                System.out.println("Press 4: backstroke");
++                selectOption = sc.nextInt();
++                sc.nextLine();
++                switch (selectOption) {
++                    case 1 -> discipline = Discipline.CRAWL;
++                    case 2 -> discipline = Discipline.BUTTERFLY;
++                    case 3 -> discipline = Discipline.BREASTSTROKE;
++                    case 4 -> discipline = Discipline.BACKSTROKE;
++                    default -> {
++                        System.out.println("Illegal value. Try again");
++                        run = true;
++                        continue;
++                    }
++                }
++                System.out.println("When does the competition start?");
++                System.out.print("Insert hour: ");
++                hours = sc.nextInt();
++                sc.nextLine();
++                System.out.print("Insert minute: ");
++                minutes = sc.nextInt();
++                sc.nextLine();
++                time = String.format("%02d:%02d", hours, minutes);
++                System.out.println("Where is the competition held?");
++                String place = sc.nextLine();
++                System.out.println("Is it a junior or senior event?");
++                System.out.println("Press 1: Junior");
++                System.out.println("Press 2: Senior");
++                selectOption = sc.nextInt();
++                sc.nextLine();
++                if (selectOption == 1) {
++                    team = Team.JUNIOR;
++                } else if (selectOption == 2){
++                    team = Team.SENIOR;
++                } else {
++                    System.out.println("Illegal value. Try again");
++                    run = true;
++                    continue;
++                }
++                competitions.add(new Competition(name, discipline, time, place, team, addCompetitors(team, discipline)));
++            } catch (Exception e) {
++                System.out.println("Illegal value. Try again");
++                run = true;
++            }
++        } while(run);
++    }
++
++    public ArrayList<Competition> getCompetitions() {
++        return competitions;
++    }
++
++    public Analysis getAnalyse() {
++        return analyse;
++    }
++
++    public void addCompetitionList(Member member) {
++
+     }
+ 
+     public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
+@@ -119,6 +143,10 @@
+     }
+ 
+     public void logDailyPerformance() {
++
++        int checkListMatch;
++        boolean memberAdded = false;
++
+         dh.initMemberJson();
+         if (!dh.getMemberList().isEmpty()) {
+             Discipline discipline;
+@@ -163,9 +191,35 @@
+                 default:
+                     discipline = null;
+             }
+-            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
++            checkListMatch = dh.getMemberList().get(memberSelect - 1).getID();
++            memberAddedToDailyPerformance(checkListMatch);
++            for (int i = 0; i < analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).size(); i++) {
++                for(int u = 0; u < checkList.length; u++) {
++                    if (checkList[u] == analyse.getDailyTopFive(discipline, dh.getMemberList().get(memberSelect - 1).getTeam()).get(i).getID()) {
++                        memberAdded = true;
++                        analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).remove(i);
++                        analyse.getDailyTopFive(discipline,dh.getMemberList().get(memberSelect - 1).getTeam()).add(i, new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()));
++                    }
++                }
++            }
++            if(!memberAdded) {
++                analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()), discipline, dh.getMemberList().get(memberSelect - 1).getTeam());
++            }
+         } else {
+             System.out.println("No members for logging");
+         }
+     }
++
++    public void memberAddedToDailyPerformance(int ID) {
++        checkList = new int[checkList.length + 1];
++        checkList[checkList.length - 1] = ID;
++    }
++
++    public String getUsername() {
++        return username;
++    }
++
++    public String getPassword() {
++        return password;
++    }
+ }
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># User-specific stuff:\r\n.idea/workspace.xml\r\n.idea/tasks.xml\r\n.idea/dictionaries\r\n.idea/vcs.xml\r\n.idea/jsLibraryMappings.xml
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 61e281c83ce3350ef49ac5a4e2dbcdf934db10b8)
++++ b/.gitignore	(date 1639261396107)
+@@ -3,4 +3,5 @@
+ .idea/tasks.xml
+ .idea/dictionaries
+ .idea/vcs.xml
+-.idea/jsLibraryMappings.xml
+\ No newline at end of file
++.idea/jsLibraryMappings.xml
++/out/
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch b/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch
+new file mode 100644
+--- /dev/null	(date 1639261396113)
++++ b/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch	(date 1639261396113)
+@@ -0,0 +1,346 @@
++Index: src/Chairman/Chairman.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package Chairman;\r\nimport com.google.gson.*;\r\n\r\nimport java.io.IOException;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Path;\r\nimport java.nio.file.StandardOpenOption;\r\n\r\npublic class Chairman {\r\n    private String username;\r\n    private String password;\r\n    //private final Gson gson = new GsonBuilder().setPrettyPrinting().create();\r\n    private final DataHandler dh = DataHandler.getInstance();\r\n\r\n    public void createNewMember(Member member){\r\n        String text = \"\";\r\n        int id;\r\n\r\n        try {\r\n            text = Files.readString(Path.of(\"members/idCounter.txt\"));\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n        id = Integer.parseInt(text);\r\n        member.setID(id);\r\n        try {\r\n            Files.writeString(Path.of(\"members/idCounter.txt\"),\"\" + (id+1), StandardOpenOption.WRITE);\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        dh.setFilePath(\"members/members.json\");\r\n        dh.addMemberToList(member);\r\n        dh.writeMembers();\r\n        System.out.println(\"Added member: \" + member.getName());\r\n    }\r\n\r\n}\r\n
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++diff --git a/src/Chairman/Chairman.java b/src/Chairman/Chairman.java
++--- a/src/Chairman/Chairman.java	(revision aeb09a05614d1751764cc6af3191137129c82245)
+++++ b/src/Chairman/Chairman.java	(date 1639172587740)
++@@ -35,4 +35,11 @@
++         System.out.println("Added member: " + member.getName());
++     }
++ 
+++    public String getUsername() {
+++        return username;
+++    }
+++
+++    public String getPassword() {
+++        return password;
+++    }
++ }
++Index: src/Trainer/Trainer.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package Trainer;\r\nimport Chairman.*;\r\nimport accounting.*;\r\nimport java.util.ArrayList;\r\nimport java.util.Scanner;\r\n\r\npublic class Trainer {\r\n    Analysis analyse = new Analysis();\r\n    Scanner sc = new Scanner(System.in);\r\n    ArrayList<Competition> competitions = new ArrayList<>();\r\n    DataHandler dh = DataHandler.getInstance();\r\n    String username;\r\n    String password;\r\n    /*\r\n    Trainer (String username, String password) {\r\n            this.username = username;\r\n            this.password = password;\r\n    }*/\r\n\r\n    public void displayCasualTopFive(Discipline discipline, Team team) {\r\n        System.out.println(\"Name:\\t\\t\\tTime:\\t\\t\\tDiscipline: \" + discipline + \"\\tTeam: \" + team);\r\n        analyse.printDailyTopFive(discipline,team);\r\n    }\r\n\r\n    public void createNewCompetition() {\r\n        Discipline discipline;\r\n        int selectOption;\r\n        Team team;\r\n        String name;\r\n        int hours;\r\n        int minutes;\r\n        String time;\r\n        System.out.print(\"Write the competition name: \");\r\n        name = sc.nextLine();\r\n        System.out.println(\"What kind of swimming discipline is the event?\");\r\n        System.out.println(\"1. crawl\");\r\n        System.out.println(\"2. butterfly\");\r\n        System.out.println(\"3. breaststroke\");\r\n        System.out.println(\"4. backstroke\");\r\n        selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        switch(selectOption) {\r\n            case 1:\r\n                discipline = Discipline.CRAWL;\r\n                break;\r\n            case 2:\r\n                discipline = Discipline.BUTTERFLY;\r\n                break;\r\n            case 3:\r\n                discipline = Discipline.BREASTSTROKE;\r\n                break;\r\n            case 4:\r\n                discipline = Discipline.BACKSTROKE;\r\n                break;\r\n            default:\r\n                discipline = null;\r\n        }\r\n        System.out.println(\"When does the competition start?\");\r\n        System.out.print(\"Insert hour: \");\r\n        hours = sc.nextInt();\r\n        sc.nextLine();\r\n        System.out.print(\"Insert minute: \");\r\n        minutes = sc.nextInt();\r\n        sc.nextLine();\r\n        time = String.format(\"%02d:%02d\", hours, minutes);\r\n        System.out.println(\"Where is the competition held?\");\r\n        String place = sc.nextLine();\r\n        System.out.println(\"Is it a junior or senior event? Insert \\\"1\\\" for junior or \\\"2\\\" for senior: \");\r\n        selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        if (selectOption == 1) {\r\n            team = Team.JUNIOR;\r\n        } else {\r\n            team = Team.SENIOR;\r\n        }\r\n        competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));\r\n    }\r\n\r\n    public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {\r\n        System.out.println(\"Would you like to add all competitors from the top five list now? (y/n)\");\r\n        System.out.println(\"To pick them one by one, add them later.\");\r\n        String selectOption = sc.nextLine();\r\n        if(selectOption.equalsIgnoreCase(\"n\")) {\r\n            return new ArrayList<>();\r\n        } else {\r\n            System.out.println(\"Competitors: \");\r\n            System.out.println(\"Name:\\t\\t\\tAge:\");\r\n            analyse.printDailyTopFive(discipline, team);\r\n            return analyse.getDailyTopFive(discipline,team);\r\n        }\r\n    }\r\n\r\n    /*public void addCompetitiorsToCompetition() {\r\n        System.out.println(\"To which competition would you like to add competitors?\");\r\n        for ( int i = 0; i < competitions.size(); i++) {\r\n            System.out.println((i + 1)+ \". \" + competitions.get(i).getName());\r\n        }\r\n        int selectOption = sc.nextInt();\r\n        sc.nextLine();\r\n        Discipline discipline = competitions.get(selectOption - 1).getDiscipline();\r\n        Team team = competitions.get(selectOption - 1).getTeam();\r\n        competitions.get(selectOption - 1).addCompetitors(analyse.getDailyTopFive(discipline,team));\r\n        System.out.println(\"added\");\r\n    }*/\r\n\r\n    public boolean getCompetitionList(){\r\n        boolean trueOrFalse;\r\n        if (competitions.size() == 0) {\r\n            System.out.println(\"No competitions registered\");\r\n            trueOrFalse = false;\r\n        } else {\r\n            trueOrFalse = true;\r\n            System.out.println(\"Competitions registered:\");\r\n            for (int i = 0; i < competitions.size(); i++) {\r\n                System.out.println((i + 1) + \". \" + competitions.get(i).getName());\r\n            }\r\n        }\r\n        return trueOrFalse;\r\n    }\r\n\r\n    public void logDailyPerformance() {\r\n        dh.initMemberJson();\r\n        if (!dh.getMemberList().isEmpty()) {\r\n            Discipline discipline;\r\n            System.out.println(\"Members available for logging: \");\r\n            for (int i = 0; i < dh.getMemberList().size(); i++) {\r\n                System.out.println((i + 1) + \". \" + dh.getMemberList().get(i).getName());\r\n            }\r\n            System.out.println(\"To select a member, insert the corresponding value\");\r\n            int memberSelect = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(dh.getMemberList().get(memberSelect - 1).getName() + \" selected.\");\r\n            System.out.println(\"Insert time for logging\");\r\n            System.out.println(\"minutes: \");\r\n            int minutes = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"seconds: \");\r\n            int seconds = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"milliseconds: \");\r\n            int milliseconds = sc.nextInt();\r\n            sc.nextLine();\r\n            System.out.println(\"Insert discipline\");\r\n            System.out.println(\"1. crawl\");\r\n            System.out.println(\"2. butterfly\");\r\n            System.out.println(\"3. breaststroke\");\r\n            System.out.println(\"4. backstroke\");\r\n            int selectOption = sc.nextInt();\r\n            sc.nextLine();\r\n            switch ((selectOption)) {\r\n                case 1:\r\n                    discipline = Discipline.CRAWL;\r\n                    break;\r\n                case 2:\r\n                    discipline = Discipline.BUTTERFLY;\r\n                    break;\r\n                case 3:\r\n                    discipline = Discipline.BREASTSTROKE;\r\n                    break;\r\n                case 4:\r\n                    discipline = Discipline.BACKSTROKE;\r\n                    break;\r\n                default:\r\n                    discipline = null;\r\n            }\r\n            analyse.setDailyTopFive(new Performance(dh.getMemberList().get(memberSelect - 1).getName(), dh.getMemberList().get(memberSelect - 1).getAge(), minutes, seconds, milliseconds, dh.getMemberList().get(memberSelect - 1).getID()),discipline, dh.getMemberList().get(memberSelect - 1).getTeam());\r\n        } else {\r\n            System.out.println(\"No members for logging\");\r\n        }\r\n    }\r\n}\r\n
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++diff --git a/src/Trainer/Trainer.java b/src/Trainer/Trainer.java
++--- a/src/Trainer/Trainer.java	(revision aeb09a05614d1751764cc6af3191137129c82245)
+++++ b/src/Trainer/Trainer.java	(date 1639173148495)
++@@ -5,19 +5,19 @@
++ import java.util.Scanner;
++ 
++ public class Trainer {
++-    Analysis analyse = new Analysis();
++-    Scanner sc = new Scanner(System.in);
++-    ArrayList<Competition> competitions = new ArrayList<>();
++-    DataHandler dh = DataHandler.getInstance();
++-    String username;
++-    String password;
+++    private Analysis analyse = new Analysis();
+++    private Scanner sc = new Scanner(System.in);
+++    private ArrayList<Competition> competitions = new ArrayList<>();
+++    private DataHandler dh = DataHandler.getInstance();
+++    private final String username = "gucci";
+++    private final String password = "prada";
++     /*
++     Trainer (String username, String password) {
++             this.username = username;
++             this.password = password;
++     }*/
++ 
++-    public void displayCasualTopFive(Discipline discipline, Team team) {
+++    public void displayDailyTopFive(Discipline discipline, Team team) {
++         System.out.println("Name:\t\t\tTime:\t\t\tDiscipline: " + discipline + "\tTeam: " + team);
++         analyse.printDailyTopFive(discipline,team);
++     }
++@@ -76,6 +76,14 @@
++         competitions.add(new Competition(name,discipline,time,place,team,addCompetitors(team, discipline)));
++     }
++ 
+++    public ArrayList<Competition> getCompetitions() {
+++        return competitions;
+++    }
+++
+++    public Analysis getAnalyse() {
+++        return analyse;
+++    }
+++
++     public ArrayList<Performance> addCompetitors(Team team, Discipline discipline) {
++         System.out.println("Would you like to add all competitors from the top five list now? (y/n)");
++         System.out.println("To pick them one by one, add them later.");
++@@ -168,4 +176,11 @@
++             System.out.println("No members for logging");
++         }
++     }
+++    public String getUsername() {
+++        return username;
+++    }
+++
+++    public String getPassword() {
+++        return password;
+++    }
++ }
++Index: src/ui/Menu.java
++IDEA additional info:
++Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
++<+>package ui;\r\n\r\nimport Chairman.*;\r\n//import Trainer.Trainer;\r\nimport accounting.Accountant;\r\n\r\nimport java.util.Scanner;\r\n\r\nclass Application{\r\n\r\n    static Scanner scan = new Scanner(System.in);\r\n\r\n    Chairman ch = new Chairman();\r\n    Accountant ac = new Accountant();\r\n    //Trainer tr = new Trainer();\r\n\r\n    public boolean doesStringRepresentInt(String string) {\r\n\r\n        if(string == null) {\r\n            return false;\r\n        }\r\n\r\n        int length = string.length();\r\n        if(length == 0) {\r\n            return false;\r\n        }\r\n\r\n        for (int i = 0; i < length; i++) {\r\n            char c = string.charAt(i);\r\n            if (c < '0' || c > '9') {\r\n                return false;\r\n            }\r\n        }\r\n        return true;\r\n    }\r\n\r\n    public int chooseFromOptions(int numberOfAvailableOptions) {\r\n\r\n        while(true) {\r\n            String choiceAsString = scan.nextLine();\r\n            boolean isInt = doesStringRepresentInt(choiceAsString);\r\n\r\n            while (isInt) {\r\n                int choiceAsInt = Integer.parseInt(choiceAsString);\r\n                if (choiceAsInt < 1 || choiceAsInt > numberOfAvailableOptions) {\r\n                    System.out.println(\"Invalid input\");\r\n                    choiceAsString = scan.nextLine();\r\n                    isInt = doesStringRepresentInt(choiceAsString);\r\n                } else {\r\n                    for (int i = 1; i <= numberOfAvailableOptions; i++) {\r\n                        if (choiceAsInt == i) {\r\n                            return choiceAsInt;\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n            if (!isInt) {\r\n                System.out.println(\"Invalid input\");\r\n            }\r\n        }\r\n    }\r\n\r\n    public void login(int oneTwoOrThree) {\r\n\r\n        String username = \"\";\r\n        String password = \"\";\r\n        boolean wrongLogin = true;\r\n\r\n            while(wrongLogin) {\r\n                System.out.print(\"Username: \");\r\n                String usernameInput = scan.nextLine();\r\n                System.out.print(\"Password: \");\r\n                String passwordInput = scan.nextLine();\r\n\r\n                switch (oneTwoOrThree) {\r\n                    case 1:\r\n                        username = ch.getUsername();\r\n                        password = ch.getPassword();\r\n                        break;\r\n                    case 2:\r\n                        username = ac.getUsername();\r\n                        password = ac.getPassword();\r\n                        break;\r\n                    case 3:\r\n                        //username = tr.getUsername();\r\n                        //password = tr.getPassword();\r\n                        break;\r\n                }\r\n\r\n                if(usernameInput.equals(username) && passwordInput.equals(password)) {\r\n                    wrongLogin = false;\r\n                    switch (oneTwoOrThree) {\r\n                        case 1 -> chairmanMenu();\r\n                        case 2 -> accountantMenu();\r\n                        case 3 -> trainerMenu();\r\n                    }\r\n                } else {\r\n                    System.out.println(\"Invalid input\\n\");\r\n                }\r\n            }\r\n    }\r\n\r\n    public void chairmanMenu() {\r\n        System.out.println(\"\\nThis is the Chairman's menu\");\r\n        displayChairmanMenu();\r\n        int choiceOfOption = chooseFromOptions(2);\r\n\r\n        if (choiceOfOption == 1) {\r\n            Member member = new Member(scan.nextInt(), scan.nextLine(), scan.nextLine(), scan.nextLine(), TypeOfSwimmer.CASUAL, Team.JUNIOR);\r\n            ch.createNewMember(member);\r\n            ac.initiateCreateSubscription(member);\r\n        } else if (choiceOfOption == 2) {\r\n            run();\r\n        }\r\n    }\r\n    public void accountantMenu() {\r\n        System.out.println(\"\\nThis is the Accountant's menu\");\r\n        displayAccountantMenu();\r\n        int choiceOfOption = chooseFromOptions(5);\r\n\r\n        switch (choiceOfOption) {\r\n            case 1 -> System.out.println(\"Code for adding member to non-paying list\");\r\n            case 2 -> System.out.println(\"Code for adding member to paying list\");\r\n            case 3 -> ac.InitiateChangeMembershipToPassive(); //System.out.println(\"Code for changing subscription of member to passive\");\r\n            case 4 -> ac.initiateGetProjectedYearlyRevenue();\r\n            case 5 -> run();\r\n        }\r\n    }\r\n    public void trainerMenu() {\r\n        System.out.println(\"\\nThis is the Trainer's menu\");\r\n        displayTrainerMenu();\r\n        int choiceOfOption = chooseFromOptions(4);\r\n\r\n        switch (choiceOfOption) {\r\n            case 1 -> System.out.println(\"Code for ?\");\r\n            case 2 -> System.out.println(\"Code for ?\");\r\n            case 3 -> System.out.println(\"Code for ?\");\r\n            case 4 -> run();\r\n        }\r\n    }\r\n\r\n    public void displayChairmanMenu() {\r\n        System.out.println(\"Choose from the following two options\");\r\n        System.out.println(\"Press 1: Create new member\");\r\n        System.out.println(\"Press 2: Log out\");\r\n    }\r\n    public void displayAccountantMenu() {\r\n        System.out.println(\"Choose from the following four options\");\r\n        System.out.println(\"Press 1: Add member to non-paying members list\");\r\n        System.out.println(\"Press 2: Add member to paying members list\");\r\n        System.out.println(\"Press 3: Change subscription of member to passive\");\r\n        System.out.println(\"Press 4: Show projected yearly revenue\");\r\n        System.out.println(\"Press 5: Log out\");\r\n    }\r\n    public void displayTrainerMenu() {\r\n        System.out.println(\"Choose from the following five options\");\r\n        System.out.println(\"Press 1: Create competition\");\r\n        System.out.println(\"Press 2: Competition list\");\r\n        System.out.println(\"Press 3: Log daily performance\");\r\n        System.out.println(\"Press 4: See daily top five\");\r\n        System.out.println(\"Press 5: Log out\");\r\n    }\r\n\r\n    public void run() {\r\n        //ac.InitiateMembershipSweep();\r\n\r\n        System.out.println(\"\\nChoose from the following three privileges\");\r\n        System.out.println(\"Press 1: Chairman\");\r\n        System.out.println(\"Press 2: Accountant\");\r\n        System.out.println(\"Press 3: Trainer\");\r\n        System.out.println(\"Press 4: Quit\");\r\n\r\n        int choiceOfPrivilege = chooseFromOptions(4);\r\n\r\n        switch (choiceOfPrivilege) {\r\n            case 1 -> login(1);\r\n            case 2 -> login(2);\r\n            case 3 -> login(3);\r\n            case 4 -> System.out.println();\r\n        }\r\n    }\r\n}\r\n\r\npublic class Menu {\r\n    public static void main(String[] args) {\r\n        new Application().run();\r\n    }\r\n}
++Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
++<+>UTF-8
++===================================================================
++diff --git a/src/ui/Menu.java b/src/ui/Menu.java
++--- a/src/ui/Menu.java	(revision aeb09a05614d1751764cc6af3191137129c82245)
+++++ b/src/ui/Menu.java	(date 1639173148480)
++@@ -1,18 +1,18 @@
++ package ui;
++ 
++ import Chairman.*;
++-//import Trainer.Trainer;
+++import Trainer.*;
++ import accounting.Accountant;
++ 
++ import java.util.Scanner;
++ 
++-class Application{
+++class  Application{
++ 
++     static Scanner scan = new Scanner(System.in);
++ 
++     Chairman ch = new Chairman();
++     Accountant ac = new Accountant();
++-    //Trainer tr = new Trainer();
+++    Trainer tr = new Trainer();
++ 
++     public boolean doesStringRepresentInt(String string) {
++ 
++@@ -71,7 +71,6 @@
++                 String usernameInput = scan.nextLine();
++                 System.out.print("Password: ");
++                 String passwordInput = scan.nextLine();
++-
++                 switch (oneTwoOrThree) {
++                     case 1:
++                         username = ch.getUsername();
++@@ -82,8 +81,8 @@
++                         password = ac.getPassword();
++                         break;
++                     case 3:
++-                        //username = tr.getUsername();
++-                        //password = tr.getPassword();
+++                        username = tr.getUsername();
+++                        password = tr.getPassword();
++                         break;
++                 }
++ 
++@@ -126,16 +125,19 @@
++             case 5 -> run();
++         }
++     }
+++
+++
++     public void trainerMenu() {
++         System.out.println("\nThis is the Trainer's menu");
++         displayTrainerMenu();
++-        int choiceOfOption = chooseFromOptions(4);
+++        int choiceOfOption = chooseFromOptions(5);
++ 
++         switch (choiceOfOption) {
++-            case 1 -> System.out.println("Code for ?");
++-            case 2 -> System.out.println("Code for ?");
++-            case 3 -> System.out.println("Code for ?");
++-            case 4 -> run();
+++            case 1 -> tr.createNewCompetition();
+++            case 2 -> competitionListMenu();
+++            case 3 -> tr.logDailyPerformance();
+++            case 4 -> displayDailyTopFiveMenu();
+++            case 5 -> run();
++         }
++     }
++ 
++@@ -154,13 +156,172 @@
++     }
++     public void displayTrainerMenu() {
++         System.out.println("Choose from the following five options");
++-        System.out.println("Press 1: Create competition");
+++        System.out.println("Press 1: Create new competition");
++         System.out.println("Press 2: Competition list");
++         System.out.println("Press 3: Log daily performance");
++-        System.out.println("Press 4: See daily top five");
+++        System.out.println("Press 4: Display daily top five");
++         System.out.println("Press 5: Log out");
++     }
++ 
+++    public void competitionListMenu() {
+++        System.out.println("Select a competition to preview or edit");
+++        if (tr.getCompetitionList()) {
+++            int selectOption = chooseFromOptions(11);
+++            competitionSelectedMenu(selectOption);
+++        }
+++    }
+++
+++    public void competitionSelectedMenu(int option) {
+++        boolean run2 = true;
+++        boolean run;
+++        do {
+++            try {
+++                System.out.println(tr.getCompetitions().get(option - 1).getName() + " selected");
+++                System.out.println("1. print competition details");
+++                System.out.println("2. log performance");
+++                System.out.println("3. print top five");
+++                System.out.println("4. add competitors");
+++                System.out.println("5. remove competitor");
+++                System.out.println("6. edit time of event");
+++                System.out.println("7. edit place of event");
+++                System.out.println("8. edit discipline");
+++                System.out.println("9. edit team");
+++                System.out.println("10. delete competition");
+++                System.out.println("11. return to menu");
+++                int selectOption = scan.nextInt();
+++                scan.nextLine();
+++                switch(selectOption) {
+++                    case 1:
+++                        tr.getCompetitions().get(option - 1).printCompetitionDetails();
+++                        break;
+++                    case 2:
+++                        if (tr.getCompetitions().get(option - 1).getMemberList().isEmpty()) {
+++                            System.out.println("No competitors registered in the competition");
+++                        } else {
+++                            tr.getCompetitions().get(option - 1).logPerformance();
+++                        }
+++                        break;
+++                    case 3:
+++                        tr.getCompetitions().get(option - 1).printTopFiveList();
+++                        break;
+++                    case 4:
+++                        Discipline discipline = tr.getCompetitions().get(option - 1).getDiscipline();
+++                        Team team = tr.getCompetitions().get(option - 1).getTeam();
+++                        tr.getCompetitions().get(option - 1).addCompetitors(tr.getAnalyse().getDailyTopFive(discipline, team));
+++                        break;
+++                    case 5:
+++                        tr.getCompetitions().get(option - 1).removeCompetitor();
+++                        break;
+++                    case 6:
+++                        int hour = scan.nextInt();
+++                        scan.nextLine();
+++                        int minute = scan.nextInt();
+++                        scan.nextLine();
+++                        tr.getCompetitions().get(option - 1).setTime(hour, minute);
+++                        break;
+++                    case 7:
+++                        String place = scan.nextLine();
+++                        tr.getCompetitions().get(option - 1).setPlace(place);
+++                        break;
+++                    case 8:
+++                        do {
+++                            run = false;
+++                            System.out.println("Current discipline is" + tr.getCompetitions().get(option - 1).getDiscipline());
+++                            int disciplineSelect = scan.nextInt();
+++                            scan.nextLine();
+++                            switch (disciplineSelect) {
+++                                case 1:
+++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.CRAWL);
+++                                    break;
+++                                case 2:
+++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BUTTERFLY);
+++                                    break;
+++                                case 3:
+++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BREASTSTROKE);
+++                                    break;
+++                                case 4:
+++                                    tr.getCompetitions().get(option - 1).setDiscipline(Discipline.BACKSTROKE);
+++                                    break;
+++                                default:
+++                                    System.out.println("Illegal value. Try again");
+++                                    run = true;
+++                            }
+++                        } while (run);
+++                        break;
+++                    case 9:
+++                        do {
+++                            run = false;
+++                            System.out.println("Current team is " + tr.getCompetitions().get(option - 1).getTeam());
+++                            System.out.println("Select team");
+++                            System.out.println("1. junior");
+++                            System.out.println("2. senior");
+++                            try {
+++                                int teamSelect = scan.nextInt();
+++                                scan.nextLine();
+++                                if (teamSelect == 1) {
+++                                    tr.getCompetitions().get(option - 1).setTeam(Team.JUNIOR);
+++                                } else if (teamSelect == 2) {
+++                                    tr.getCompetitions().get(option - 1).setTeam(Team.SENIOR);
+++                                } else {
+++                                    System.out.println("Illegal value. Try again");
+++                                    run = true;
+++                                }
+++                            } catch (Exception e) {
+++                                System.out.println("Illegal value. Try again");
+++                                run = true;
+++                            }
+++                        } while(run);
+++                        break;
+++                    case 10:
+++                        tr.getCompetitions().remove(option - 1);
+++                        run2 = false;
+++                    case 11:
+++                        run2 = false;
+++                }
+++            } catch (Exception e) {
+++                System.out.println("Illegal value! Try again.");
+++            }
+++        } while (run2);
+++    }
+++
+++
+++    public void displayDailyTopFiveMenu() {
+++
+++        Discipline discipline = null;
+++
+++        System.out.println("Display daily top five in the following disciplines");
+++        System.out.println("Press 1: Crawl");
+++        System.out.println("Press 2: Butterfly");
+++        System.out.println("Press 3: Breaststroke");
+++        System.out.println("Press 4: Backstroke");
+++        int choiceOfPrivilege = chooseFromOptions(4);
+++        switch(choiceOfPrivilege) {
+++            case 1 -> discipline = Discipline.CRAWL;
+++            case 2 -> discipline = Discipline.BUTTERFLY;
+++            case 3 -> discipline = Discipline.BREASTSTROKE;
+++            case 4 -> discipline = Discipline.BACKSTROKE;
+++        }
+++        tr.displayDailyTopFive(discipline, juniorOrSenior());
+++    }
+++
+++    private Team juniorOrSenior() {
+++
+++        Team team = null;
+++
+++        System.out.println("Press 1: Junior");
+++        System.out.println("Press 2: Senior");
+++        int selectOption = chooseFromOptions(2);
+++        if (selectOption == 1) {
+++            team = Team.JUNIOR;
+++        } else if (selectOption == 2) {
+++            team = Team.SENIOR;
+++        }
+++
+++        return team;
+++    }
+++
+++
+++
++     public void run() {
++         //ac.InitiateMembershipSweep();
++ 
++@@ -181,7 +342,7 @@
++     }
++ }
++ 
++-public class Menu {
+++public class  Menu {
++     public static void main(String[] args) {
++         new Application().run();
++     }
+Index: .idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM__Changes_.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM__Changes_.xml b/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM__Changes_.xml
+new file mode 100644
+--- /dev/null	(date 1639261462953)
++++ b/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM__Changes_.xml	(date 1639261462953)
+@@ -0,0 +1,54 @@
++<changelist name="Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]" date="1639173325182" recycled="false" toDelete="true">
++  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/shelved.patch" />
++  <option name="DESCRIPTION" value="Uncommitted changes before Update at 12/10/2021 10:55 PM [Changes]" />
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Member.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Member.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Member.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/TypeOfSwimmer.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TypeOfSwimmer.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Team.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Team.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Application.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Application.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/DataHandler.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/DataHandler.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/ui/Menu.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Menu.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/Chairman/Chairman.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Chairman.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/Subscription.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/Subscription.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Subscription.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/Accountant.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/Accountant.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/Accountant.class" />
++  </binary>
++  <binary>
++    <option name="BEFORE_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
++    <option name="AFTER_PATH" value="out/production/the-dolphin-project/accounting/TestMain.class" />
++    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_12_10_2021_10_55_PM_[Changes]/TestMain.class" />
++  </binary>
++</changelist>
+\ No newline at end of file
+diff --git a/Competitions/Competitions.json b/Competitions/Competitions.json
+new file mode 100644

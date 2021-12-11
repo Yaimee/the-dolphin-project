@@ -138,6 +138,8 @@ class Application{
     }
     public void trainerMenu() {
         DataHandler dh = DataHandler.getInstance();
+        dh.setFilePath("Competitions/Competitions.json");
+        dh.initCompetitionsJson();
         do {
             System.out.println("\nThis is the Trainer's menu");
             displayTrainerMenu();
@@ -150,7 +152,6 @@ class Application{
                 case 4 -> displayDailyTopFiveMenu();
                 case 5 -> {
                     run = false;
-                    dh.addToCompetitionsList(tr.getCompetitions());
                     run();
                 }
             }
