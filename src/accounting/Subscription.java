@@ -1,6 +1,6 @@
+//coded by Jacob
 package accounting;
 
-import Chairman.Chairman;
 import Chairman.DataHandler;
 import Chairman.Member;
 import Chairman.TypeOfSwimmer;
@@ -16,24 +16,18 @@ import java.util.Date;
 public class Subscription {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private Chairman ch = new Chairman();
-
-    static int numberOfJuniorCasual = 0;
-    static int numberOfSeniorCasual = 0;
-    static int numberOfJuniorCompetitor = 0;
-    static int numberOfSeniorCompetitor = 0;
-    static int numberOfSeniorRetired = 0;
-    static int numberOfPassiveMemberships = 0;
 
     private ArrayList<Integer> numberOfSubscriptions = new ArrayList<>();
     DataHandler dh = DataHandler.getInstance();
 
+    //creates the member, when prompted by the Chairman in class Menu
     public void createSubscription(Member member) {
         initiateNumberOfSubscriptions();
         getTypeOfSubscription(member, true);
         writeMembersSub();
     }
 
+    //writes the content of ArrayList<Integer> numberOfSubscriptions to the file numberOfSubscriptions.json in the member directory
     public void writeMembersSub() {
 
         String toJson = gson.toJson(numberOfSubscriptions);
@@ -47,6 +41,7 @@ public class Subscription {
 
     }
 
+    //reads from a file json file containing six values, each representing a member's payment teir in the club
     private void initiateNumberOfSubscriptions() {
         try {
             Reader readerSub = null;
@@ -66,17 +61,22 @@ public class Subscription {
 
     }
 
+    //pretty straight forward - returns the length of the nonPayingMembers directory
     public int lengthOfNonPayingMembersDirectory() {
         File directory = new File("members/nonPayingMembers/");
         return directory.list()==null?0:directory.list().length;
     }
 
+    //
     public void membershipSweep() {
         int length = lengthOfNonPayingMembersDirectory(); //referring to the length of the nonPayingMembers directory
-        for (int i = 1; i <= length; i++) {
+        for (int i = 1; i <= length; i++) { //using a for-loop, goes through all the files of the directory
             File file = new File("members/nonPayingMembers/nonPayingMember" + "#" + i + ".json");
             if (file.exists()) {
                 //inspired by https://stackoverflow.com/questions/15042855/delete-files-older-than-x-days
+                //Checking, whether their last modification date exceeds 28 days
+                //if so the if-statement is entered and the file is then deleted,
+                //therein revoking the member's membership privileges
                 int maximumDifference = 28;
                 long difference = new Date().getTime() - file.lastModified();
                 if (difference > (long) maximumDifference * 24 * 60 * 60 * 1000) {
@@ -86,6 +86,8 @@ public class Subscription {
         }
     }
 
+    //using an ID number, this method takes a member from the payingMember.json, a creates a new file in the nonPayingMembers directory
+    //the member is then deleted from the original json file
     public void addMemberToNonPayingList(int membershipId) {
         int nonPayingMemberId = generateId();
         dh.setFilePath("members/nonPayingMembers/nonPayingMember" + "#" + nonPayingMemberId + ".json");
@@ -95,6 +97,7 @@ public class Subscription {
         dh.deleteMember(membershipId);
     }
 
+    //based upon the length of the directory, a new file is generated using a for-loop, if said file, doesn't exist yet
     public int generateId() {
         int numberOfFiles = lengthOfNonPayingMembersDirectory();
         for (int i = 1; i <= numberOfFiles; i++) {
@@ -106,7 +109,6 @@ public class Subscription {
         return numberOfFiles + 1;
     }
 
-    //added code for clarity - should be deleted upon completion
     public void changeMembershipToPassive(int membershipId) {
         initiateNumberOfSubscriptions();
 
@@ -118,7 +120,7 @@ public class Subscription {
         writeMembersSub();
     }
 
-
+    //Accumulates and returns the sum of all the number of subscriptions multiplied by their price teir
     public int getProjectedYearlyRevenue() {
         initiateNumberOfSubscriptions();
         int revenue = 0;
@@ -129,6 +131,9 @@ public class Subscription {
         return revenue;
     }
 
+    //takes a member, and uses their age and TypeOfSwimmer to determine how much their membership should cost
+    //dependant upon the second parametre, the boolean isPositiveOrNegative, their related value will either
+    //increment with one, or decrease with one and increment the passiveMembership teir
     public void getTypeOfSubscription(Member member, boolean isPositiveOrNegative) {
         int age = member.getAge();
         TypeOfSwimmer swimmer = member.getSwimmer();

@@ -1,3 +1,6 @@
+//coded by Jacob, except for the following methods:
+//CompetitionListMenu(),competitionSelectedMenu(), displayDailyTopFiveMenu() & juniorOrSenior())
+//those methods were made by Rasmus
 package ui;
 
 import Chairman.*;
@@ -10,6 +13,7 @@ class Application{
 
     static Scanner scan = new Scanner(System.in);
 
+    //Instances of the four main(relevant) classes
     DataHandler dh = DataHandler.getInstance();
 
     Chairman ch = new Chairman();
@@ -17,17 +21,21 @@ class Application{
     Trainer tr = new Trainer();
     boolean run = true;
 
+    //Checks whether a String is really an int
     public boolean doesStringRepresentInt(String string) {
 
+        //checks whether the String equals null
         if(string == null) {
             return false;
         }
 
+        //checks if the String contains no symbols
         int length = string.length();
         if(length == 0) {
             return false;
         }
 
+        //finally, checks whether the String contains actual numbers
         for (int i = 0; i < length; i++) {
             char c = string.charAt(i);
             if (c < '0' || c > '9') {
@@ -37,20 +45,24 @@ class Application{
         return true;
     }
 
+    //in cases where a specified number of options are laid out before the user,
+    //this method takes an int as a variable of how many options there are to choose from.
+    //only returning an int, whence a correct input has been entered
     public int chooseFromOptions(int numberOfAvailableOptions) {
 
         while(true) {
             String choiceAsString = scan.nextLine();
-            boolean isInt = doesStringRepresentInt(choiceAsString);
+            boolean isInt = doesStringRepresentInt(choiceAsString); //if isInt turns out to be true, the immediate part of the following while loop is entered
+            //if this isn't the case, the (!isInt) is entered
 
             while (isInt) {
                 int choiceAsInt = Integer.parseInt(choiceAsString);
-                if (choiceAsInt < 1 || choiceAsInt > numberOfAvailableOptions) {
+                if (choiceAsInt < 1 || choiceAsInt > numberOfAvailableOptions) { //if the int is out of the specified range
                     System.out.println("Invalid input");
                     choiceAsString = scan.nextLine();
                     isInt = doesStringRepresentInt(choiceAsString);
                 } else {
-                    for (int i = 1; i <= numberOfAvailableOptions; i++) {
+                    for (int i = 1; i <= numberOfAvailableOptions; i++) { //an acceptable int is entered
                         if (choiceAsInt == i) {
                             return choiceAsInt;
                         }
@@ -63,6 +75,8 @@ class Application{
         }
     }
 
+    //the int oneTwoOrThree is used two times in this method.
+    //in both cases it refers to the LoginInfo or Menu matching the individual logging in
     public void login(int oneTwoOrThree) {
 
         String username = "";
@@ -89,7 +103,8 @@ class Application{
                         break;
                 }
 
-                if(usernameInput.equals(username) && passwordInput.equals(password)) {
+                if(usernameInput.equals(username) && passwordInput.equals(password)) { //compares input from the Scanner with the loginInfo
+                    //from the relevant class
                     wrongLogin = false;
                     switch (oneTwoOrThree) {
                         case 1 -> chairmanMenu();
@@ -107,12 +122,13 @@ class Application{
         displayChairmanMenu();
         int choiceOfOption = chooseFromOptions(2);
 
+        //code to be run, when choosing the "create new member" option
         if (choiceOfOption == 1) {
             Member member = ch.initMemberCreation();
             ch.createNewMember(member);
             ac.initiateCreateSubscription(member);
         } else if (choiceOfOption == 2) {
-            run();
+            run(); //effectively logging out of ChairmanMenu, back to the main
         }
     }
     public void accountantMenu() {
@@ -120,7 +136,6 @@ class Application{
         displayAccountantMenu();
         int choiceOfOption = chooseFromOptions(4);
 
-        //System.out.println("Code for changing subscription of member to passive");
         switch (choiceOfOption) {
             case 1:
                 ac.InitiateAddMemberToNonPayingList();
@@ -137,9 +152,6 @@ class Application{
         }
     }
     public void trainerMenu() {
-        DataHandler dh = DataHandler.getInstance();
-        dh.setFilePath("Competitions/Competitions.json");
-        dh.initCompetitionsJson();
         do {
             System.out.println("\nThis is the Trainer's menu");
             displayTrainerMenu();
@@ -299,7 +311,6 @@ class Application{
         } while (run2);
     }
 
-
     public void displayDailyTopFiveMenu() {
 
         Discipline discipline = null;
@@ -335,9 +346,10 @@ class Application{
     }
 
 
-
     public void run() {
+        //searches nonPayingMembers directory and deletes files/members that are older than 28 days
         dh.initMemberJson();
+        //reads from the json containing members and adding those objects to an ArrayList
         ac.InitiateMembershipSweep();
 
         System.out.println("\nChoose from the following three privileges");
@@ -348,6 +360,7 @@ class Application{
 
         int choiceOfPrivilege = chooseFromOptions(4);
 
+        //new style switch
         switch (choiceOfPrivilege) {
             case 1 -> login(1);
             case 2 -> login(2);
@@ -360,5 +373,5 @@ class Application{
 public class Menu {
     public static void main(String[] args) {
         new Application().run();
-    }
+    } //fleeing the static context
 }
